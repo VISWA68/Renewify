@@ -3,6 +3,7 @@ import 'package:Renewify/main.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:location/location.dart';
 import 'dart:convert';
 
 class ComplaintPage extends StatefulWidget {
@@ -14,69 +15,136 @@ class _ComplaintPageState extends State<ComplaintPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController _nameController = TextEditingController();
   TextEditingController _phoneController = TextEditingController();
-  TextEditingController _cityController = TextEditingController();
   TextEditingController _titleController = TextEditingController();
   TextEditingController _problemController = TextEditingController();
+  TextEditingController _cityController = TextEditingController();
+
+  LocationData? _locationData;
+  bool _isFetchingLocation = false;
+
+  Future<void> _fetchLocation() async {
+    setState(() {
+      _isFetchingLocation = true;
+    });
+    try {
+      Location location = Location();
+
+      bool _serviceEnabled = await location.serviceEnabled();
+      if (!_serviceEnabled) {
+        _serviceEnabled = await location.requestService();
+        if (!_serviceEnabled) {
+          throw Exception('Location services are disabled.');
+        }
+      }
+
+      PermissionStatus _permissionGranted = await location.hasPermission();
+      if (_permissionGranted == PermissionStatus.denied) {
+        _permissionGranted = await location.requestPermission();
+        if (_permissionGranted != PermissionStatus.granted) {
+          throw Exception('Location permission denied.');
+        }
+      }
+
+      _locationData = await location.getLocation();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to fetch location: $e')),
+      );
+    } finally {
+      setState(() {
+        _isFetchingLocation = false;
+      });
+    }
+  }
 
   Future<void> _submitComplaint() async {
-    if (_formKey.currentState!.validate()) {
-      final String name = _nameController.text;
-      final String phone = _phoneController.text;
-      final String city = _cityController.text;
-      final String title = _titleController.text;
-      final String problem = _problemController.text;
+  if (_formKey.currentState!.validate()) {
+    final String name = _nameController.text;
+    final String phone = _phoneController.text;
+    final String title = _titleController.text;
+    final String problem = _problemController.text;
+    final String city = _cityController.text;
+
+    Location location = Location();
+
+    try {
+      // Check and request location services and permissions
+      bool serviceEnabled = await location.serviceEnabled();
+      if (!serviceEnabled) {
+        serviceEnabled = await location.requestService();
+        if (!serviceEnabled) {
+          throw Exception('Location services are disabled.');
+        }
+      }
+
+      PermissionStatus permissionGranted = await location.hasPermission();
+      if (permissionGranted == PermissionStatus.denied) {
+        permissionGranted = await location.requestPermission();
+        if (permissionGranted != PermissionStatus.granted) {
+          throw Exception('Location permissions are denied.');
+        }
+      }
+
+      // Get the current location
+      LocationData _locationData = await location.getLocation();
+
+      // Construct the Google Maps URL
+      String locationUrl =
+          "https://www.google.com/maps?q=${_locationData.latitude},${_locationData.longitude}";
 
       // Prepare the request body
       final Map<String, dynamic> requestBody = {
         "title": title,
-        "description": problem,
-        "phoneno": phone,
+        "issue": problem,
+        "phone": phone,
+        "name": name,
         "city": city,
-        "user_name": name
+        "location": locationUrl,
       };
 
-      try {
+      if (Global.sessionCookie == null || Global.sessionCookie!.isEmpty) {
+        throw Exception('Session cookie is not available');
+      }
 
-        if (Global.sessionCookie == null || Global.sessionCookie!.isEmpty) {
-          throw Exception('Session cookie is not available');
-        }
-        // Send the POST request
-        final response = await http.post(
-          Uri.parse('http://192.168.1.3:8000//api/complaint/'),
-          headers: {"Content-Type": "application/json",
-          "Cookie": Global.sessionCookie ?? "",
-          "X-CSRFToken": Global.csrfToken ?? "",
-          },
-          body: jsonEncode(requestBody),
+      // Send the POST request
+      final response = await http.post(
+        Uri.parse('https://983e-14-195-39-82.ngrok-free.app/request_service'),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: jsonEncode(requestBody),
+      );
+
+      print("Response status: ${response.statusCode}");
+      print("Response body: ${response.body}");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        // Navigate to the confirmation page
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                ConfirmationPage(name, phone, city, problem),
+          ),
         );
-
-        // Debugging: Print response status and body
-        print("Response status: ${response.statusCode}");
-        print("Response body: ${response.body}");
-
-        if (response.statusCode == 200 || response.statusCode == 201) {
-          // Navigate to the confirmation page if the POST request is successful
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ConfirmationPage(name, phone, city, problem),
-            ),
-          );
-        } else {
-          // Handle failure
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to submit complaint. Error: ${response.body}')),
-          );
-        }
-      } catch (error) {
-        // Handle any exceptions during the request
-        print("Request failed: $error");
+      } else {
+        // Handle failure
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to submit complaint. Please try again.')),
+          SnackBar(
+              content: Text(
+                  'Failed to submit complaint. Error: ${response.body}')),
         );
       }
+    } catch (error) {
+      print("Request failed: $error");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(
+                'Failed to submit complaint. Please ensure location is enabled and try again.')),
+      );
     }
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +160,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
                 MyApp.of(context)!.setLocale(const Locale('en'));
               } else if (value == 'ta') {
                 MyApp.of(context)!.setLocale(const Locale('ta'));
-              }else if(value =='hi'){
+              } else if (value == 'hi') {
                 MyApp.of(context)!.setLocale(const Locale('hi'));
               }
             },
@@ -188,8 +256,8 @@ class _ComplaintPageState extends State<ComplaintPage> {
               ),
               SizedBox(height: 20),
               ElevatedButton(
-                onPressed: _submitComplaint,
-                child: Text('Submit'),
+                onPressed: _isFetchingLocation ? null : _submitComplaint,
+                child: Text(_isFetchingLocation ? 'Fetching Location...' : 'Submit'),
               ),
             ],
           ),

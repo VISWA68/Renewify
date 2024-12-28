@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:Renewify/gen_l10n/app_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:Renewify/main.dart'; // Adjust the import based on your project structure
 
 class FirstPage extends StatelessWidget {
   const FirstPage({Key? key}) : super(key: key);
 
   Future<bool> _registerUser(String username, String email, String password) async {
-    final url = Uri.parse('http://192.168.1.6:8000//api/register/'); // Use localhost IP
+    final url = Uri.parse('http://192.168.137.131:8005/api/register/'); // Use localhost IP
 
     try {
       final response = await http.post(
