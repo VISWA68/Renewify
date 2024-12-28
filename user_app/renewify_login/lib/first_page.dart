@@ -7,8 +7,10 @@ import 'package:renewify_login/main.dart'; // Adjust the import based on your pr
 class FirstPage extends StatelessWidget {
   const FirstPage({Key? key}) : super(key: key);
 
-  Future<bool> _registerUser(String username, String email, String password) async {
-    final url = Uri.parse('http://192.168.1.6:8000//api/register/'); // Use localhost IP
+  Future<bool> _registerUser(
+      String username, String email, String password) async {
+    final url =
+        Uri.parse('http://192.168.1.6:8000//api/register/'); // Use localhost IP
 
     try {
       final response = await http.post(
@@ -43,9 +45,11 @@ class FirstPage extends StatelessWidget {
     // Controllers for text fields
     final TextEditingController _nameController = TextEditingController();
     final TextEditingController _emailController = TextEditingController();
-    final TextEditingController _phoneNumberController = TextEditingController();
+    final TextEditingController _phoneNumberController =
+        TextEditingController();
     final TextEditingController _passwordController = TextEditingController();
-    final TextEditingController _confirmPasswordController = TextEditingController();
+    final TextEditingController _confirmPasswordController =
+        TextEditingController();
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -79,7 +83,8 @@ class FirstPage extends StatelessWidget {
                       children: [
                         Text(
                           AppLocalizations.of(context)!.newe,
-                          style: const TextStyle(fontSize: 24, color: Colors.black),
+                          style: const TextStyle(
+                              fontSize: 24, color: Colors.black),
                         ),
                         Text(
                           AppLocalizations.of(context)!.sign,
@@ -137,20 +142,22 @@ class FirstPage extends StatelessWidget {
                             String name = _nameController.text.trim();
                             String email = _emailController.text.trim();
                             String password = _passwordController.text.trim();
-                            String confirmPassword = _confirmPasswordController.text.trim();
+                            String confirmPassword =
+                                _confirmPasswordController.text.trim();
 
                             if (password == confirmPassword) {
-                              _registerUser(name, email, password).then((isRegistered) {
+                              _registerUser(name, email, password)
+                                  .then((isRegistered) {
                                 if (isRegistered) {
                                   Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => HomeScreen(
-                                        /* name: name,
+                                          /* name: name,
                                         email: email,
                                         phoneNumber: _phoneNumberController.text.trim(),
                                         password: password, */
-                                      ),
+                                          ),
                                     ),
                                   );
                                 } else {
@@ -159,10 +166,13 @@ class FirstPage extends StatelessWidget {
                                     builder: (BuildContext context) {
                                       return AlertDialog(
                                         title: Text('Registration Failed'),
-                                        content: Text('An error occurred during registration. Please try again.'),
+                                        content: Text(
+                                            'An error occurred during registration. Please try again.'),
                                         actions: <Widget>[
                                           TextButton(
-                                            child: Text(AppLocalizations.of(context)!.ok),
+                                            child: Text(
+                                                AppLocalizations.of(context)!
+                                                    .ok),
                                             onPressed: () {
                                               Navigator.of(context).pop();
                                             },
@@ -179,10 +189,12 @@ class FirstPage extends StatelessWidget {
                                 builder: (BuildContext context) {
                                   return AlertDialog(
                                     title: Text('Password Mismatch'),
-                                    content: Text('Please ensure both passwords match.'),
+                                    content: Text(
+                                        'Please ensure both passwords match.'),
                                     actions: <Widget>[
                                       TextButton(
-                                        child: Text(AppLocalizations.of(context)!.ok),
+                                        child: Text(
+                                            AppLocalizations.of(context)!.ok),
                                         onPressed: () {
                                           Navigator.of(context).pop();
                                         },
@@ -194,7 +206,8 @@ class FirstPage extends StatelessWidget {
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 40),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 15, horizontal: 40),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),

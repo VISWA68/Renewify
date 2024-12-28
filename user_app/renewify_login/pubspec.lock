@@ -49,6 +49,7 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.19.0"
+<<<<<<< HEAD
   cross_file:
     dependency: transitive
     description:
@@ -65,6 +66,8 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.6"
+=======
+>>>>>>> 3b78d9c166adfa65a7b63614df797e4f075c8985
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -229,6 +232,7 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "10.8.0"
+<<<<<<< HEAD
   geolocator:
     dependency: "direct main"
     description:
@@ -285,6 +289,8 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.2"
+=======
+>>>>>>> 3b78d9c166adfa65a7b63614df797e4f075c8985
   http_parser:
     dependency: transitive
     description:
@@ -477,6 +483,7 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.15.0"
+<<<<<<< HEAD
   mgrs_dart:
     dependency: transitive
     description:
@@ -501,6 +508,8 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.0"
+=======
+>>>>>>> 3b78d9c166adfa65a7b63614df797e4f075c8985
   path:
     dependency: transitive
     description:
@@ -610,6 +619,7 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.3.2"
+<<<<<<< HEAD
   unicode:
     dependency: transitive
     description:
@@ -618,6 +628,8 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.3.1"
+=======
+>>>>>>> 3b78d9c166adfa65a7b63614df797e4f075c8985
   url_launcher:
     dependency: "direct main"
     description:
@@ -682,6 +694,7 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.3"
+<<<<<<< HEAD
   uuid:
     dependency: transitive
     description:
@@ -690,6 +703,8 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.5.1"
+=======
+>>>>>>> 3b78d9c166adfa65a7b63614df797e4f075c8985
   vector_math:
     dependency: transitive
     description:
