@@ -20,6 +20,7 @@ users_collection = mongo.db.users
 sellers_collection = mongo.db.sellers
 shops_collection = mongo.db.shops
 products_collection = mongo.db.products
+service_providers_collection = mongo.db.service_providers
 
 # Helper function to serialize ObjectId
 def serialize_object_id(data):
@@ -265,6 +266,97 @@ def get_seller_details(seller_id):
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+####################################Service Providers#################################################
+@app.route('/register_service_provider', methods=['POST'])
+def register_service_provider():
+    try:
+        data = request.json
+
+        # Check for missing fields
+        required_fields = ['name', 'email', 'password', 'phone', 'service_type']
+        for field in required_fields:
+            if field not in data:
+                return jsonify({"error": f"Missing {field}"}), 400
+
+        # Check if email already exists
+        if users_collection.find_one({"email": data["email"]}):
+            return jsonify({"error": "Email already exists"}), 400
+
+        # Create service provider user
+        user = {
+            "name": data["name"],
+            "email": data["email"],
+            "password": data["password"],  # Hash password in production
+            "phone": data["phone"]
+        }
+        user_id = users_collection.insert_one(user).inserted_id
+
+        # Create service provider profile
+        service_provider = {
+            "user_id": str(user_id),
+            "name": data["name"],
+            "email": data["email"],
+            "phone": data["phone"],
+            "service_type": data["service_type"],  # 'Installation', 'Service', or 'Both'
+        }
+        service_provider_id = service_providers_collection.insert_one(service_provider).inserted_id
+
+        return jsonify({"message": "Service provider registered successfully", "service_provider_id": str(service_provider_id)}), 201
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/login_service_provider', methods=['POST'])
+def login_service_provider():
+    try:
+        data = request.json
+
+        # Validate user
+        user = users_collection.find_one({"email": data["email"]})
+        if not user or user["password"] != data["password"]:  # Use hashed passwords in production
+            return jsonify({"error": "Invalid credentials"}), 401
+
+        # Fetch service provider profile
+        service_provider = service_providers_collection.find_one({"email": data["email"]})
+        if not service_provider:
+            return jsonify({"error": "Service provider profile not found"}), 404
+
+        response = {
+            "message": "Login successful",
+            "service_provider_id": str(service_provider["_id"]),
+            "service_type": service_provider["service_type"],  # Return service type
+        }
+
+        return jsonify(response), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/get_service_provider/<string:service_provider_id>', methods=['GET'])
+def get_service_provider_details(service_provider_id):
+    try:
+        # Fetch service provider information
+        service_provider = service_providers_collection.find_one({"_id": ObjectId(service_provider_id)})
+        if not service_provider:
+            return jsonify({"error": "Service provider not found"}), 404
+
+        service_provider_data = {
+            "service_provider_id": str(service_provider["_id"]),
+            "name": service_provider["name"],
+            "email": service_provider["email"],
+            "phone": service_provider["phone"],
+            "service_type": service_provider["service_type"],  # Return service type
+        }
+
+        return jsonify(service_provider_data), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+###################################################################################################################
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=8000, threaded=False)
