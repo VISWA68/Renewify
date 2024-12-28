@@ -1,16 +1,13 @@
 # vendor_app
 
-A new Flutter project.
+Vendors can connect with user
 
-## Getting Started
+## To run this
 
-This project is a starting point for a Flutter application.
+#Run command
 
-A few resources to get you started if this is your first Flutter project:
+cd Renewify/vendor_app/vendor_app
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+flutter pub get
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+flutter run
