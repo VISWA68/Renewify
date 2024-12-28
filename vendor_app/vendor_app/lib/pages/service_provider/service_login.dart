@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:vendor_app/main.dart';
+import 'package:vendor_app/pages/service_provider/service_home.dart';
 import 'package:vendor_app/pages/service_provider/service_register.dart';
 
 class ServiceProviderLoginPage extends StatefulWidget {
@@ -17,9 +18,8 @@ class _ServiceProviderLoginPageState extends State<ServiceProviderLoginPage> {
   String _password = '';
 
   Future<void> _loginServiceProvider() async {
-    final url = Url.url;
     final response = await http.post(
-      Uri.parse(url),
+      Uri.parse('${Url.url}/login_service_provider'),
       headers: {'Content-Type': 'application/json'},
       body: json.encode({
         'email': _email,
@@ -32,7 +32,11 @@ class _ServiceProviderLoginPageState extends State<ServiceProviderLoginPage> {
     if (response.statusCode == 200) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(responseData['message'])));
-      // Navigate to the next screen, e.g., dashboard
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ServiceProviderHome(userId: responseData['service_provider_id'],),
+          ));
     } else {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(responseData['error'])));
