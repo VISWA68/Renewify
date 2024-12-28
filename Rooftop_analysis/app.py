@@ -5,12 +5,18 @@ from shapely.geometry import Polygon
 from PIL import Image, ImageDraw
 from io import BytesIO
 import requests
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 app = Flask(__name__)
+# latitude = 13.055177
+# longitude = 80.076801
 
-latitude = 13.055177
-longitude = 80.076801
-API_KEY = 'AIzaSyAG4nroilWCKF8vjSZGXY3fhH2li6cr7LY'
+latitude = 13.047233
+longitude = 80.074266
+API_KEY = os.getenv('APIKEY')
 area = 0.0
 polygon_points = []
 
