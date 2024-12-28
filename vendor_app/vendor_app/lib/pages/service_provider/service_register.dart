@@ -6,6 +6,8 @@ import 'package:vendor_app/main.dart';
 import 'package:vendor_app/pages/service_provider/service_login.dart';
 
 class ServiceProviderRegisterPage extends StatefulWidget {
+  const ServiceProviderRegisterPage({super.key});
+
   @override
   _ServiceProviderRegisterPageState createState() =>
       _ServiceProviderRegisterPageState();
@@ -59,8 +61,8 @@ class _ServiceProviderRegisterPageState
         ),
         centerTitle: true,
         elevation: 0,
-        backgroundColor: Colors.green, // Customizing the app bar
-        automaticallyImplyLeading: false, // Remove the back button
+        backgroundColor: Colors.green, 
+        automaticallyImplyLeading: false, 
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.0),
@@ -78,7 +80,6 @@ class _ServiceProviderRegisterPageState
               ),
             ),
             SizedBox(height: 30),
-            // Form for name, email, phone, password, and service type
             Form(
               key: _formKey,
               child: Column(
@@ -114,10 +115,8 @@ class _ServiceProviderRegisterPageState
                         value!.isEmpty ? 'Please enter your password' : null,
                   ),
                   SizedBox(height: 20),
-                  // Dropdown for Service Type
                   _buildDropdownField(),
                   SizedBox(height: 30),
-                  // Register button
                   _buildCustomButton(
                     text: 'Register',
                     onPressed: () {
@@ -136,7 +135,6 @@ class _ServiceProviderRegisterPageState
     );
   }
 
-  // Custom TextField for the form
   Widget _buildTextField({
     required String label,
     bool obscureText = false,
@@ -157,7 +155,6 @@ class _ServiceProviderRegisterPageState
     );
   }
 
-  // Dropdown for Service Type
   Widget _buildDropdownField() {
     return DropdownButtonFormField<String>(
       value: _serviceType,
@@ -181,7 +178,6 @@ class _ServiceProviderRegisterPageState
     );
   }
 
-  // A reusable button widget for consistency
   Widget _buildCustomButton(
       {required String text, required VoidCallback onPressed}) {
     return Container(
@@ -190,12 +186,12 @@ class _ServiceProviderRegisterPageState
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           foregroundColor: Colors.white,
-          backgroundColor: Colors.green, // Text color
+          backgroundColor: Colors.green, 
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(25), // Rounded corners
+            borderRadius: BorderRadius.circular(25), 
           ),
           padding: EdgeInsets.symmetric(vertical: 15),
-          elevation: 8, // Elevation for shadow effect
+          elevation: 8, 
         ),
         onPressed: onPressed,
         child: Text(
