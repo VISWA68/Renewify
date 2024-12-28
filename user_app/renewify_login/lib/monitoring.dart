@@ -1,9 +1,10 @@
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:geolocator/geolocator.dart';
+import 'package:provider/provider.dart';
+import 'package:renewify_login/provider/prediction_provider.dart';
 import 'dart:async';
 
 // import 'biogas_services.dart';
@@ -53,7 +54,7 @@ class _SolarElectricityState extends State<SolarElectricity> {
     _getCurrentLocation();
     fetchExpectedPowerOutput().then((value) {
       setState(() {
-         _expectedPowerOutput = double.parse(value.toStringAsFixed(2));
+        _expectedPowerOutput = double.parse(value.toStringAsFixed(2));
       });
     });
 
@@ -131,29 +132,30 @@ class _SolarElectricityState extends State<SolarElectricity> {
   }
 
   Future<void> _fetchSensorData(int id) async {
-  final response = await http.get(
-      Uri.parse('http://192.168.170.45:8000/api/sensor-data/$id/'));
+    final response = await http
+        .get(Uri.parse('http://192.168.170.45:8000/api/sensor-data/$id/'));
 
-  if (response.statusCode == 200) {
-    final data = jsonDecode(response.body);
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
 
-    setState(() {
-      solar1Current = '${(data['current1'] as double).toStringAsFixed(2)} A';
-      solar1Voltage = '${(data['voltage1'] as double).toStringAsFixed(2)} V';
+      setState(() {
+        solar1Current = '${(data['current1'] as double).toStringAsFixed(2)} A';
+        solar1Voltage = '${(data['voltage1'] as double).toStringAsFixed(2)} V';
 
-      solar2Current = '${(data['current2'] as double).toStringAsFixed(2)} A';
-      solar2Voltage = '${(data['voltage2'] as double).toStringAsFixed(2)} V';
+        solar2Current = '${(data['current2'] as double).toStringAsFixed(2)} A';
+        solar2Voltage = '${(data['voltage2'] as double).toStringAsFixed(2)} V';
 
-      batteryCurrent = '${(data['battery_current'] as double).toStringAsFixed(2)} A';
-      batteryVoltage = '${(data['battery_voltage'] as double).toStringAsFixed(2)} V';
-      batteryPercentage = data['battery_percentage'].toInt();
-      // gasAlert = data['gas_alert'];
-    });
-  } else {
-    print('Failed to fetch sensor data');
+        batteryCurrent =
+            '${(data['battery_current'] as double).toStringAsFixed(2)} A';
+        batteryVoltage =
+            '${(data['battery_voltage'] as double).toStringAsFixed(2)} V';
+        batteryPercentage = data['battery_percentage'].toInt();
+        // gasAlert = data['gas_alert'];
+      });
+    } else {
+      print('Failed to fetch sensor data');
+    }
   }
-}
-
 
   IconData _getWeatherIcon(String weatherMain) {
     switch (weatherMain.toLowerCase()) {
@@ -176,11 +178,13 @@ class _SolarElectricityState extends State<SolarElectricity> {
 
   @override
   Widget build(BuildContext context) {
+    final predictedEnergyOutput =
+        Provider.of<PredictionProvider>(context).predictedEnergyOutput;
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
         backgroundColor: Colors.green.shade300,
-        title: Text('Electricity Monitoring'),
+        title: const Text('Electricity Monitoring'),
         actions: [
           IconButton(
             icon: Icon(Icons.person),
@@ -399,7 +403,7 @@ class _SolarElectricityState extends State<SolarElectricity> {
             // Expected Power Output
             Center(
               child: Text(
-                'Expected Power Output: $_expectedPowerOutput kW',
+                'Expected Power Output: $predictedEnergyOutput kW',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -410,279 +414,283 @@ class _SolarElectricityState extends State<SolarElectricity> {
             SizedBox(height: 20),
             // Solar 1 and Solar 2 Cards
 // Solar 1 and Solar 2 Cards
-Expanded(
-  child: Row(
-    children: [
-      // Solar 1 Container
-      Expanded(
-        child: Container(
-          height: 150, // Set the desired height here
-          child: Card(
-            elevation: 4,
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            Expanded(
+              child: Row(
                 children: [
-                  Text(
-                    'Solar 1',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black54,
+                  // Solar 1 Container
+                  Expanded(
+                    child: Container(
+                      height: 150, // Set the desired height here
+                      child: Card(
+                        elevation: 4,
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Solar 1',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black54,
+                                ),
+                              ),
+                              Divider(),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Current:',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.black54,
+                                    ),
+                                  ),
+                                  Text(
+                                    solar1Current,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Voltage:',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.black54,
+                                    ),
+                                  ),
+                                  Text(
+                                    solar1Voltage,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                  Divider(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Current:',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.black54,
+                  SizedBox(width: 10),
+                  // Solar 2 Container
+                  Expanded(
+                    child: Container(
+                      height: 150, // Set the same height for consistency
+                      child: Card(
+                        elevation: 4,
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Solar 2',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black54,
+                                ),
+                              ),
+                              Divider(),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Current:',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.black54,
+                                    ),
+                                  ),
+                                  Text(
+                                    solar2Current,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Voltage:',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.black54,
+                                    ),
+                                  ),
+                                  Text(
+                                    solar2Voltage,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                      Text(
-                        solar1Current,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Voltage:',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.black54,
-                        ),
-                      ),
-                      Text(
-                        solar1Voltage,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ],
               ),
             ),
-          ),
-        ),
-      ),
-      SizedBox(width: 10),
-      // Solar 2 Container
-      Expanded(
-        child: Container(
-          height: 150, // Set the same height for consistency
-          child: Card(
-            elevation: 4,
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Solar 2',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black54,
-                    ),
-                  ),
-                  Divider(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Current:',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.black54,
-                        ),
-                      ),
-                      Text(
-                        solar2Current,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Voltage:',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.black54,
-                        ),
-                      ),
-                      Text(
-                        solar2Voltage,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    ],
-  ),
-),
-SizedBox(height: 10),
+            SizedBox(height: 10),
 
 // Raise Complaint Container
-Container(
-  padding: EdgeInsets.all(12.0),
-  child: Column(
-    crossAxisAlignment: CrossAxisAlignment.center,
-    children: [
-      Text(
-        'Raise Complaint',
-        style: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-          color: Colors.black54,
-        ),
-      ),
-      SizedBox(height: 10),
-      ElevatedButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => ComplaintPage()), 
-          );
-        },
-        child: Text('Raise Complaint'),
-      ),
-    ],
-  ),
-),
-SizedBox(height: 10),
+            Container(
+              padding: EdgeInsets.all(12.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    'Raise Complaint',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black54,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ComplaintPage()),
+                      );
+                    },
+                    child: Text('Raise Complaint'),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 10),
 
 // Battery Monitoring Card
-Card(
-  elevation: 4,
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Battery Monitoring',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.black54,
-          ),
-        ),
-        Divider(),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Current:',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.black54,
+            Card(
+              elevation: 4,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Battery Monitoring',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black54,
+                    ),
+                  ),
+                  Divider(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Current:',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.black54,
+                        ),
+                      ),
+                      Text(
+                        batteryCurrent,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Voltage:',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.black54,
+                        ),
+                      ),
+                      Text(
+                        batteryVoltage,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Charge Level:',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.black54,
+                        ),
+                      ),
+                      Text(
+                        '$batteryPercentage%',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                  //   if (gasAlert.isNotEmpty)
+                  //     Padding(
+                  //       padding: const EdgeInsets.only(top: 10),
+                  //       child: Row(
+                  //         children: [
+                  //           Icon(
+                  //             Icons.warning,
+                  //             color: Colors.red,
+                  //             size: 24,
+                  //           ),
+                  //           SizedBox(width: 8),
+                  //           Text(
+                  //             'Gas Alert: $gasAlert',
+                  //             style: TextStyle(
+                  //               fontSize: 16,
+                  //               color: Colors.red,
+                  //             ),
+                  //           ),
+                  //         ],
+                  //       ),
+                  //     ),
+                ],
               ),
             ),
-            Text(
-              batteryCurrent,
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.black,
-              ),
-            ),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Voltage:',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.black54,
-              ),
-            ),
-            Text(
-              batteryVoltage,
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.black,
-              ),
-            ),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Charge Level:',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.black54,
-              ),
-            ),
-            Text(
-              '$batteryPercentage%',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.black,
-              ),
-            ),
-          ],
-        ),
-      //   if (gasAlert.isNotEmpty)
-      //     Padding(
-      //       padding: const EdgeInsets.only(top: 10),
-      //       child: Row(
-      //         children: [
-      //           Icon(
-      //             Icons.warning,
-      //             color: Colors.red,
-      //             size: 24,
-      //           ),
-      //           SizedBox(width: 8),
-      //           Text(
-      //             'Gas Alert: $gasAlert',
-      //             style: TextStyle(
-      //               fontSize: 16,
-      //               color: Colors.red,
-      //             ),
-      //           ),
-      //         ],
-      //       ),
-      //     ),
-      ],
-    ),
-  ),
-
           ],
         ),
       ),
     );
   }
 }
+
 class SolarElectricityMonitoringPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SolarElectricity();
   }
 }
-

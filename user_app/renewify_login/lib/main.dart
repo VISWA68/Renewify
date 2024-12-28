@@ -4,9 +4,10 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:renewify_login/gen_l10n/app_localizations.dart';
 import 'package:renewify_login/provider/location_provider.dart';
+import 'package:renewify_login/provider/prediction_provider.dart';
 import 'dashboard1.dart';
 import 'first_page.dart';
-import 'package:http/http.dart' as http; // For encoding the data to JSON
+import 'package:http/http.dart' as http; 
 
 void main() {
   runApp(
@@ -14,6 +15,9 @@ void main() {
       providers: [
         ChangeNotifierProvider<LocationProvider>(
           create: (context) => LocationProvider(),
+        ),
+        ChangeNotifierProvider<PredictionProvider>(
+          create: (context) => PredictionProvider(),
         ),
       ],
       child: MyApp(),

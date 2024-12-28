@@ -68,8 +68,8 @@ class _PanelRecommendationState extends State<PanelRecommendation> {
   Future<void> _fetchAndSendRecommendation() async {
     final locationProvider =
         Provider.of<LocationProvider>(context, listen: false);
-    final predictionProvider = Provider.of<PredictionProvider>(context,
-        listen: false); // Access the new provider
+    final predictionProvider =
+        Provider.of<PredictionProvider>(context, listen: false);
 
     final latitude = locationProvider.latitude;
     final longitude = locationProvider.longitude;
@@ -85,12 +85,10 @@ class _PanelRecommendationState extends State<PanelRecommendation> {
         longitude,
       );
 
-      // After sending the first recommendation request, make the second one
       await _sendPredictionRequest(
         _electricityConsumption!,
         latitude,
         longitude,
-        predictionProvider,
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -133,18 +131,19 @@ class _PanelRecommendationState extends State<PanelRecommendation> {
   }
 
   Future<void> _sendPredictionRequest(
-      String electricityConsumption,
-      double latitude,
-      double longitude,
-      PredictionProvider predictionProvider) async {
+    String electricityConsumption,
+    double latitude,
+    double longitude,
+  ) async {
+    final predictionProvider =
+        Provider.of<PredictionProvider>(context, listen: false);
     double electricityConsumptionValue = 0;
     if (electricityConsumption == 'More than 400 units') {
       electricityConsumptionValue = 500;
     } else if (electricityConsumption == 'Less than 400 units') {
       electricityConsumptionValue = 300;
     }
-    const String url =
-        'https://0650-14-195-39-82.ngrok-free.app/predict_energy';
+    const String url = 'http://192.168.23.5:5000/predict_energy';
 
     final Map<String, dynamic> requestBody = {
       'electricity_consumption': electricityConsumptionValue,
@@ -164,6 +163,7 @@ class _PanelRecommendationState extends State<PanelRecommendation> {
         final predictedEnergyOutput =
             responseData['predicted_next_month_energy_output_kwh'];
         predictionProvider.setPredictedEnergyOutput(predictedEnergyOutput);
+        print(predictedEnergyOutput);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error: ${response.statusCode}')),
@@ -221,6 +221,9 @@ class _PanelRecommendationState extends State<PanelRecommendation> {
 
   @override
   Widget build(BuildContext context) {
+    final predictedEnergyOutput =
+        context.watch<PredictionProvider>().predictedEnergyOutput;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.green.shade300,
@@ -298,6 +301,17 @@ class _PanelRecommendationState extends State<PanelRecommendation> {
                 ),
               ),
             ),
+            const SizedBox(height: 20),
+            // Displaying predicted energy output
+            if (predictedEnergyOutput != null)
+              Text(
+                'Expected Power Output: $predictedEnergyOutput kW',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
           ],
         ),
       ),
