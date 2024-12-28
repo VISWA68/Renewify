@@ -427,9 +427,60 @@ def get_requests():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route('/get_complaints', methods=['POST'])
+def get_complaints():
+    try:
+        # Get request IDs from the request body
+        data = request.get_json()
+        request_ids = data.get("request_ids", [])
 
+        if not request_ids:
+            return jsonify({"message": "No request IDs provided"}), 400
+
+        # Fetch complaints from the database using request IDs
+        complaints = list(requests_collection.find({"request_id": {"$in": request_ids}}, {"_id": 0}))
+        
+        return jsonify({"complaints": complaints}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 ###################################################################################################################
+def recommend_panel_type(power_input, space_input):
+    # Define logic based on input strings
+    if power_input == "less than 400 units" and space_input == "less space":
+        return "monocrystalline"
+    elif power_input == "more than 400 units" and space_input == "less space":
+        return "monocrystalline"
+    elif power_input == "less than 400 units" and space_input == "more space":
+        return "polycrystalline, monocrystalline"
+    elif power_input == "more than 400 units" and space_input == "more space":
+        return "polycrystalline"
+    else:
+        return "Invalid input"
+
+# Flask route for recommendation
+@app.route('/recommend', methods=['POST'])
+def recommendation():
+    try:
+        # Parse the JSON request body
+        data = request.get_json()
+        power_input = data.get('electricity_consumption')
+        space_input = data.get('roof_space')
+
+        # Validate inputs
+        if not power_input or not space_input:
+            return jsonify({'error': 'Missing required inputs'}), 400
+
+        # Get the recommendation
+        recommendation = recommend_panel_type(power_input, space_input)
+
+        # Return the recommendation
+        return jsonify({'recommendation': recommendation}), 200
+    except Exception as e:
+        # Handle unexpected errors
+        return jsonify({'error': str(e)}), 500
+
+############################################################################################################
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=8000, threaded=False)
