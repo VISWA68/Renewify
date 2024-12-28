@@ -98,8 +98,14 @@ class _ServiceProviderRequestsPageState extends State<ServiceProviderHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 215, 226, 215),
       appBar: AppBar(
-        title: Text('Requests'),
+        title: Text(
+          'Requests',
+          style: TextStyle(color: Colors.white),
+        ),
+        elevation: 0,
+        backgroundColor: Colors.green,
         centerTitle: true,
         leading: SizedBox(),
         actions: [
