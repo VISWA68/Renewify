@@ -53,6 +53,11 @@ def index():
     image_path = "static/satellite_image.png"
     image.save(image_path)
     return render_template('index.html', image_url=image_path)
+
+@app.route('/bipv')
+def bipv():
+    return render_template('bipv.html')
+
 @app.route('/get_lat_long', methods=['POST'])  # Change to POST
 def lat_long():
     global latitude, longitude
