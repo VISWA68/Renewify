@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'dashboard1.dart';
-import 'package:Renewify/gen_l10n/app_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'first_page.dart';
 import 'package:http/http.dart' as http; // For encoding the data to JSON
 
@@ -55,7 +55,7 @@ class HomeScreen extends StatelessWidget {
   HomeScreen({Key? key}) : super(key: key);
 
   Future<bool> _loginUser(String username, String password) async {
-    final url = Uri.parse('http://192.168.1.3:8000//api/login/');
+    final url = Uri.parse('http://192.168.137.131:8005/api/login/');
 
     try {
       final response = await http.post(
@@ -87,10 +87,10 @@ class HomeScreen extends StatelessWidget {
         }
       }
 
-      return true;
+      return false;
     } catch (e) {
       print('Login Error: $e');
-      return true;
+      return false;
     }
   }
 
@@ -174,36 +174,35 @@ class HomeScreen extends StatelessWidget {
                               onPressed: () {
                                 String username = _nameController.text.trim();
                                 String password = _passwordController.text.trim();
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => DashBoard(name: username),));
-                                // _loginUser(username, password).then((isAuthenticated) {
-                                //   if (isAuthenticated) {
-                                //     Navigator.pushReplacement(
-                                //       context,
-                                //       MaterialPageRoute(
-                                //         builder: (context) => DashBoard(name: username),
-                                //       ),
-                                //     );
-                                //   } else {
-                                //     showDialog(
-                                //       context: context,
-                                //       builder: (BuildContext context) {
-                                //         return AlertDialog(
-                                //           title: Text('Login Failed'),
-                                //           content: Text('Invalid username or password. Please try again.'),
-                                //           actions: <Widget>[
-                                //             TextButton(
-                                //               child: Text(AppLocalizations.of(context)!.ok),
-                                //               onPressed: () {
-                                //                 Navigator.of(context).pop();
-                                //               },
-                                //             ),
-                                //           ],
-                                //         );
-                                //       },
-                                //     );
-                                //   }
-                                // }
-                                
+
+                                _loginUser(username, password).then((isAuthenticated) {
+                                  if (isAuthenticated) {
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => DashBoard(name: username),
+                                      ),
+                                    );
+                                  } else {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: Text('Login Failed'),
+                                          content: Text('Invalid username or password. Please try again.'),
+                                          actions: <Widget>[
+                                            TextButton(
+                                              child: Text(AppLocalizations.of(context)!.ok),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  }
+                                });
                               },
                               style: OutlinedButton.styleFrom(
                                 padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
