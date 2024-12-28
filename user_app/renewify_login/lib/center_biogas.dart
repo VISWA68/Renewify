@@ -1,8 +1,8 @@
-import 'package:Renewify/complaint.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 import 'package:url_launcher/url_launcher.dart';
-// import 'biogas_services.dart';
+import 'biogas_services.dart';
 import 'dashboard.dart';
 import 'main.dart';
 import 'monitoring.dart';
@@ -12,22 +12,15 @@ import 'shop.dart';
 import 'solarservices.dart';
 import 'subsidies.dart';
 
-class thingstoknow extends StatelessWidget {
-  const thingstoknow({Key? key}) : super(key: key);
+class BiogasCenters extends StatelessWidget {
+  const BiogasCenters({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final double containerHeight = 220.0;
-    final double containerHeightNOC =
-        260.0; // Increased height for NOC container
-    final double containerMargin = 16.0;
-    final double iconSize = 32.0;
-    final double iconRadius = 40.0;
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.green.shade300,
-        title: Text('Things to know'),
+        title: Text('Solar Services'),
         actions: [
           PopupMenuButton<String>(
             icon: FaIcon(FontAwesomeIcons.globe),
@@ -36,7 +29,7 @@ class thingstoknow extends StatelessWidget {
                 MyApp.of(context)!.setLocale(const Locale('en'));
               } else if (value == 'ta') {
                 MyApp.of(context)!.setLocale(const Locale('ta'));
-              } else if(value =='hi'){
+              }else if(value =='hi'){
                 MyApp.of(context)!.setLocale(const Locale('hi'));
               }
             },
@@ -121,7 +114,7 @@ class thingstoknow extends StatelessWidget {
             ),
             ListTile(
               leading: Icon(Icons.wb_sunny),
-              title: Text('Solar Installation'),
+              title: Text('Installation Centers'),
               onTap: () {
                 Navigator.push(
                   context,
@@ -144,13 +137,13 @@ class thingstoknow extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: Icon(Icons.warning_rounded),
-              title: Text('Complaints'),
+              leading: Icon(Icons.local_gas_station),
+              title: Text('Biogas'),
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>  ComplaintPage(),
+                    builder: (context) => const BiogasServices(),
                   ),
                 );
               },
@@ -216,151 +209,115 @@ class thingstoknow extends StatelessWidget {
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildContainer(
-              color: Colors.lightBlueAccent,
-              icon: Icons.location_city,
-              title: 'No Objection Certificate',
-              text:
-                  'To apply for a No Objection Certificate (NOC) from the municipality, visit the following link:',
-              containerHeight: containerHeightNOC,
-              iconSize: iconSize,
-              iconRadius: iconRadius,
-              containerMargin: containerMargin,
-              buttonText: 'Apply for NOC',
-              buttonLink:
-                  'https://parivahan.gov.in/parivahan//en/content/no-objection-certificate',
+            const Text(
+              'CONTACT THE BIOGAS INSTALLATION CENTERS NEAR YOU!!',
+              style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green),
             ),
-            _buildContainer(
-              color: const Color.fromARGB(255, 193, 255, 114),
-              icon: Icons.info,
-              title: 'Cost of Solar Installation',
-              text:
-                  'The average cost of a solar installation today is between Rs.15,000 to Rs.20,000 per kilowatt, depending on the size of the system and other factors.',
-              containerHeight: containerHeight,
-              iconSize: iconSize,
-              iconRadius: iconRadius,
-              containerMargin: containerMargin,
+            const SizedBox(height: 20),
+            _buildContactCenter(
+              'HRG Solutions',
+              '1025,Balaji Chambers,E Ward Rajaram Road, Retteri, Chennai',
+              '9674028382',
+              'contacthomebiogas@gmail.com',
+              'https://www.homebiogas.com',
             ),
-            _buildContainer(
-              color: Color.fromARGB(235, 156, 252, 115),
-              icon: Icons.warning,
-              title: 'Subsidies for Solar Installations',
-              text:
-                  'Subsidies for solar installations can cover up to 30% of the total cost, depending on the state and the specific program.',
-              containerHeight: containerHeight,
-              iconSize: iconSize,
-              iconRadius: iconRadius,
-              containerMargin: containerMargin,
+            _buildContactCenter(
+              'Diamond engineering enterprises',
+              'No.122/38 Near Tondiarpet Market, Tondiarpet Chennai - 600081, Tamil Nadu, India',
+              '8048600293',
+              'Diamondenggchennai@gmail.com',
+              'https://www.indiamart.com/diamond-engineering-enterprises',
             ),
-            _buildContainer(
-              color: const Color.fromARGB(255, 193, 255, 114),
-              icon: Icons.help,
-              title: 'Payback Period',
-              text:
-                  'The payback period for a solar installation can range from 3 to 7 years, depending on the cost of electricity and the amount of sunlight your location receives.',
-              containerHeight: containerHeight,
-              iconSize: iconSize,
-              iconRadius: iconRadius,
-              containerMargin: containerMargin,
+            _buildContactCenter(
+              'Flexi Balloon Biogas Plant',
+              'No. 827, Nandgam, District Kheda, Taluka Mahudha, Ahmedabad-387335, Gujarat, India',
+              '8047828100',
+              'Balloonbiogas@gmail.com',
+              'https://www.indiamart.com/flexiballoonbiogasplant-ahmedabad/?pid=12784349097&c_id=424&mid=121272&pn=Mini+Digester+1',
             ),
-            _buildContainer(
-              color: const Color.fromARGB(255, 162, 241, 129),
-              icon: Icons.check_circle,
-              title: 'Financing Options',
-              text:
-                  'Financing options for solar installations include loans, leases, and power purchase agreements (PPAs), which can help reduce the upfront cost.',
-              containerHeight: containerHeight,
-              iconSize: iconSize,
-              iconRadius: iconRadius,
-              containerMargin: containerMargin,
+            _buildContactCenter(
+              'ORCCI Eco Products',
+              '1a 4, Monish Enclave, Sri Abinandhan Nagar, Nanmangalam, Chengalpattu, Nanmangalam Chennai - 600129, Tamil Nadu, India',
+              '8043870034',
+              'contactorcciecoprouduct@gmail.com',
+              'https://www.indiamart.com/orcci-eco-products',
             ),
           ],
         ),
       ),
-      backgroundColor: const Color.fromARGB(255, 248, 246, 246),
     );
   }
 
-  Widget _buildContainer({
-    required Color color,
-    required IconData icon,
-    required String title,
-    required String text,
-    required double containerHeight,
-    required double iconSize,
-    required double iconRadius,
-    required double containerMargin,
-    String? buttonText,
-    String? buttonLink,
-  }) {
+  Widget _buildContactCenter(
+      String name, String address, String phone, String email, String website) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: containerMargin),
-      padding: const EdgeInsets.all(16),
-      height: containerHeight,
+      margin: const EdgeInsets.symmetric(vertical: 16.0),
+      padding: const EdgeInsets.all(12.0),
       decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8.0),
+        boxShadow: const [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: const Offset(0, 3),
+            color: Colors.black38,
+            blurRadius: 4.0,
+            offset: Offset(2, 2),
           ),
         ],
       ),
-      child: Stack(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Positioned(
-            top: 10,
-            left: 10,
-            child: CircleAvatar(
-              radius: iconRadius / 2,
-              backgroundColor: Colors.white,
-              child: Icon(
-                icon,
-                size: iconSize,
-                color: color,
-              ),
-            ),
+          Text(
+            name,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          Padding(
-            padding: EdgeInsets.only(left: iconRadius + 20, top: 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  text,
-                  style: const TextStyle(fontSize: 16, color: Colors.black),
-                ),
-                if (buttonText != null && buttonLink != null) ...[
-                  const Spacer(),
-                  ElevatedButton(
-                    onPressed: () {
-                      launchURL(buttonLink);
-                    },
-                    child: Text(buttonText),
-                  ),
-                ],
-              ],
-            ),
+          const SizedBox(height: 8),
+          Text(address),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _buildIconButton(
+                icon: Icons.phone,
+                tooltip: phone,
+                onTap: () => _launchUrl('tel:$phone'),
+              ),
+              _buildIconButton(
+                icon: Icons.email,
+                tooltip: email,
+                onTap: () => _launchUrl('mailto:$email'),
+              ),
+              _buildIconButton(
+                icon: Icons.link,
+                onTap: () => _launchUrl(website),
+              ),
+            ],
           ),
         ],
       ),
     );
   }
 
-  void launchURL(String url) async {
+  Widget _buildIconButton({
+    required IconData icon,
+    required VoidCallback onTap,
+    String? tooltip,
+  }) {
+    return Tooltip(
+      message: tooltip ?? '',
+      child: IconButton(
+        icon: Icon(icon, color: Colors.green),
+        onPressed: onTap,
+      ),
+    );
+  }
+
+  Future<void> _launchUrl(String url) async {
     if (await canLaunch(url)) {
       await launch(url);
     } else {

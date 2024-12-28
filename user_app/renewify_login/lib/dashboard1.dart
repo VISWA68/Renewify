@@ -1,26 +1,50 @@
+import 'package:Renewify/complaint.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 // import 'biogas_services.dart';
+import 'dashboard.dart';
 import 'main.dart';
 import 'monitoring.dart';
 import 'post_view_page.dart';
-import 'complaint.dart';
 import 'settings.dart';
 import 'shop.dart';
+import 'dart:math';
 import 'solarservices.dart';
-import 'subsidies.dart'; 
+import 'subsidies.dart';
 import 'package:Renewify/gen_l10n/app_localizations.dart';
-class Dashboard extends StatefulWidget {
-  const Dashboard({Key? key}) : super(key: key);
+
+class DashBoard extends StatefulWidget {
+  final String name;
+  const DashBoard({Key? key, required this.name}) : super(key: key);
 
   @override
-  _DashboardState createState() => _DashboardState();
+  _DashBoardState createState() => _DashBoardState();
 }
 
-class _DashboardState extends State<Dashboard>
+class _DashBoardState extends State<DashBoard>
     with SingleTickerProviderStateMixin {
   late Animation<double> animation;
   late AnimationController _controller;
+  late List<String>
+    tutorialTexts = [
+      AppLocalizations.of(context)!.tut1,
+      AppLocalizations.of(context)!.tut2,
+      AppLocalizations.of(context)!.tut3,
+      AppLocalizations.of(context)!.tut4,
+      AppLocalizations.of(context)!.tut5,
+      AppLocalizations.of(context)!.tut6,
+      AppLocalizations.of(context)!.tut7,
+    ];
+  final List<GlobalKey> containerKeys = [
+    GlobalKey(),
+    GlobalKey(),
+    GlobalKey(),
+    GlobalKey(),
+    GlobalKey(),
+    GlobalKey(),
+  ];
+  int currentTutorialIndex = 0;
+  OverlayEntry? _overlayEntry;
 
   @override
   void initState() {
@@ -35,11 +59,133 @@ class _DashboardState extends State<Dashboard>
     animation.addListener(() {
       setState(() {});
     });
+
+    // // In
+    // //itialize the tutorialTexts inside initState
+    // void didChangeDependencies() {
+    // super.didChangeDependencies();
+    // tutorialTexts = [
+    //   AppLocalizations.of(context)!.tut1,
+    //   AppLocalizations.of(context)!.tut2,
+    //   AppLocalizations.of(context)!.tut3,
+    //   AppLocalizations.of(context)!.tut4,
+    //   AppLocalizations.of(context)!.tut5,
+    //   AppLocalizations.of(context)!.tut6,
+    //   AppLocalizations.of(context)!.tut7,
+    // ];
+    // }
+
+    // Show the first tutorial alert when the widget is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _showTutorialOverlay();
+    });
+  }
+
+
+  void _showTutorialOverlay() {
+    if (currentTutorialIndex >= tutorialTexts.length) return;
+
+    RenderBox? renderBox = containerKeys[currentTutorialIndex]
+        .currentContext
+        ?.findRenderObject() as RenderBox?;
+    Offset? containerPosition = renderBox?.localToGlobal(Offset.zero);
+    Size screenSize = MediaQuery.of(context).size;
+
+    if (containerPosition != null) {
+      _removeExistingOverlay();
+
+      _overlayEntry = OverlayEntry(
+        builder: (context) {
+          final double maxWidth = screenSize.width * 0.8; // 80% of screen width
+          final double maxHeight =
+              screenSize.height * 0.6; // 60% of screen height
+
+          final double overlayWidth = maxWidth;
+          final double overlayHeight = min(
+            maxHeight,
+            MediaQuery.of(context).size.height - containerPosition.dy - 50,
+          );
+
+          final double leftPosition =
+              (containerPosition.dx + (renderBox?.size.width ?? 0) / 2) -
+                  (overlayWidth / 2);
+          final double topPosition = containerPosition.dy + 50;
+
+          return Positioned(
+            top: topPosition.clamp(0.0, screenSize.height - overlayHeight),
+            left: leftPosition.clamp(0.0, screenSize.width - overlayWidth),
+            width: overlayWidth,
+            child: Material(
+              color: Colors.transparent,
+              child: Container(
+                padding: EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [BoxShadow(color: Colors.black45, blurRadius: 10)],
+                ),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize:
+                        MainAxisSize.min, // Minimize size to fit content
+                    children: [
+                      Text(AppLocalizations.of(context)!.tutorial,
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      SizedBox(height: 8),
+                      Text(
+                        tutorialTexts[currentTutorialIndex],
+                        style: TextStyle(
+                            fontSize: 14), // Adjust text size to fit content
+                      ),
+                      SizedBox(height: 16),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          ElevatedButton(
+                            child: Text(AppLocalizations.of(context)!.ok),
+                            onPressed: () {
+                              setState(() {
+                                currentTutorialIndex++;
+                              });
+                              _removeExistingOverlay();
+                              _showTutorialOverlay();
+                            },
+                          ),
+                          SizedBox(width: 8),
+                          ElevatedButton(
+                            child: Text(AppLocalizations.of(context)!.skip),
+                            onPressed: () {
+                              setState(() {
+                                currentTutorialIndex++;
+                              });
+                              _removeExistingOverlay();
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      );
+
+      Overlay.of(context).insert(_overlayEntry!);
+    }
+  }
+
+  void _removeExistingOverlay() {
+    _overlayEntry?.remove();
+    _overlayEntry = null;
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _removeExistingOverlay(); // Remove overlay when disposing
     super.dispose();
   }
 
@@ -55,8 +201,7 @@ class _DashboardState extends State<Dashboard>
                 color: Colors.green,
               ),
               child: Padding(
-                padding:
-                    const EdgeInsets.only(top: 15.0), // Adjust top padding here
+                padding: const EdgeInsets.only(top: 15.0),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -68,8 +213,8 @@ class _DashboardState extends State<Dashboard>
                         );
                       },
                       child: Image.asset(
-                        'assets/images/logo1.png', // Replace with your logo path
-                        height: 40, // Adjust the height of the image
+                        'assets/images/logo1.png',
+                        height: 40,
                       ),
                     ),
                     SizedBox(width: 10),
@@ -84,7 +229,7 @@ class _DashboardState extends State<Dashboard>
                         AppLocalizations.of(context)!.renew,
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 20, // Adjust the font size if needed
+                          fontSize: 20,
                         ),
                       ),
                     ),
@@ -94,7 +239,7 @@ class _DashboardState extends State<Dashboard>
             ),
             ListTile(
               leading: Icon(Icons.home),
-              title: Text( AppLocalizations.of(context)!.home),
+              title: Text(AppLocalizations.of(context)!.home),
               onTap: () {
                 Navigator.pushReplacement(
                   context,
@@ -126,15 +271,14 @@ class _DashboardState extends State<Dashboard>
                 );
               },
             ),
-           ListTile(
-              leading: const Icon(Icons.warning_rounded),
+            ListTile(
+              leading: Icon(Icons.warning_rounded),
               title: Text(AppLocalizations.of(context)!.complaint),
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>
-                         ComplaintPage(),
+                    builder: (context) =>  ComplaintPage(),
                   ),
                 );
               },
@@ -204,9 +348,9 @@ class _DashboardState extends State<Dashboard>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
-                'Keerthana',
-                style: TextStyle(
+              Text(
+                widget.name, // Use the passed name here
+                style: const TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
@@ -240,7 +384,7 @@ class _DashboardState extends State<Dashboard>
                 MyApp.of(context)!.setLocale(const Locale('en'));
               } else if (value == 'ta') {
                 MyApp.of(context)!.setLocale(const Locale('ta'));
-              }else if(value =='hi'){
+              } else if(value =='hi'){
                 MyApp.of(context)!.setLocale(const Locale('hi'));
               }
             },
@@ -269,6 +413,7 @@ class _DashboardState extends State<Dashboard>
       ),
       body: Stack(
         children: [
+          // Animated wave background
           Positioned(
             bottom: 0,
             right: animation.value,
@@ -279,7 +424,7 @@ class _DashboardState extends State<Dashboard>
                 child: Container(
                   color: Colors.green.shade200,
                   width: 700,
-                  height: 200, //adjust
+                  height: 200,
                 ),
               ),
             ),
@@ -294,29 +439,26 @@ class _DashboardState extends State<Dashboard>
                 child: Container(
                   color: Colors.green.shade200,
                   width: 700,
-                  height: 200, //adjust
+                  height: 200,
                 ),
               ),
             ),
           ),
           // Main content
           Padding(
-            padding: const EdgeInsets.only(
-                top: 58.0,
-                left: 18.0,
-                right: 18.0,
-                bottom: 18.0), // Adjust padding here
+            padding: const EdgeInsets.only(top: 58.0, left: 18.0, right: 18.0, bottom:18.0),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(height: 10),
                 Expanded(
                   child: GridView.count(
-                    crossAxisCount:
-                        MediaQuery.of(context).size.width < 600 ? 2 : 3,
+                    crossAxisCount: MediaQuery.of(context).size.width < 600 ? 2 : 3,
                     crossAxisSpacing: 10,
                     mainAxisSpacing: 10,
                     children: <Widget>[
                       DashboardItem(
+                        key: containerKeys[0],
                         title: AppLocalizations.of(context)!.solar,
                         icon: Icons.wb_sunny,
                         onTap: () {
@@ -329,6 +471,7 @@ class _DashboardState extends State<Dashboard>
                         },
                       ),
                       DashboardItem(
+                        key: containerKeys[1],
                         title: AppLocalizations.of(context)!.subl,
                         icon: Icons.attach_money,
                         onTap: () {
@@ -341,6 +484,7 @@ class _DashboardState extends State<Dashboard>
                         },
                       ),
                       DashboardItem(
+                        key: containerKeys[2],
                         title: AppLocalizations.of(context)!.complaint,
                         icon: Icons.warning_rounded,
                         onTap: () {
@@ -353,6 +497,7 @@ class _DashboardState extends State<Dashboard>
                         },
                       ),
                       DashboardItem(
+                        key: containerKeys[3],
                         title: AppLocalizations.of(context)!.ele,
                         icon: Icons.electric_bolt,
                         onTap: () {
@@ -365,6 +510,7 @@ class _DashboardState extends State<Dashboard>
                         },
                       ),
                       DashboardItem(
+                        key: containerKeys[4],
                         title: AppLocalizations.of(context)!.green,
                         icon: Icons.podcasts,
                         onTap: () {
@@ -376,6 +522,7 @@ class _DashboardState extends State<Dashboard>
                         },
                       ),
                       DashboardItem(
+                        key: containerKeys[5],
                         title: AppLocalizations.of(context)!.energy,
                         icon: Icons.shopping_cart,
                         onTap: () {

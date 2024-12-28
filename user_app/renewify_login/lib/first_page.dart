@@ -1,8 +1,40 @@
 import 'package:flutter/material.dart';
-import 'main.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:Renewify/gen_l10n/app_localizations.dart';
+import 'package:Renewify/main.dart'; // Adjust the import based on your project structure
 
 class FirstPage extends StatelessWidget {
   const FirstPage({Key? key}) : super(key: key);
+
+  Future<bool> _registerUser(String username, String email, String password) async {
+    final url = Uri.parse('http://192.168.1.6:8000//api/register/'); // Use localhost IP
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'username': username,
+          'email': email,
+          'password': password,
+        }),
+      );
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        // Registration successful
+        print('Registration successful');
+        return true;
+      } else {
+        // Registration failed
+        print('Registration failed: ${response.body}');
+        return false;
+      }
+    } catch (e) {
+      print('Error: $e');
+      return false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -11,16 +43,11 @@ class FirstPage extends StatelessWidget {
     // Controllers for text fields
     final TextEditingController _nameController = TextEditingController();
     final TextEditingController _emailController = TextEditingController();
-    final TextEditingController _phoneNumberController =
-        TextEditingController();
+    final TextEditingController _phoneNumberController = TextEditingController();
     final TextEditingController _passwordController = TextEditingController();
-    final TextEditingController _confirmPasswordController =
-        TextEditingController();
+    final TextEditingController _confirmPasswordController = TextEditingController();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('First Page'),
-      ),
       body: SingleChildScrollView(
         child: LayoutBuilder(
           builder: (context, constraints) {
@@ -50,39 +77,39 @@ class FirstPage extends StatelessWidget {
                     right: getWidth(0.05),
                     child: Column(
                       children: [
-                        const Text(
-                          'Create new account',
-                          style: TextStyle(fontSize: 24, color: Colors.black),
+                        Text(
+                          AppLocalizations.of(context)!.newe,
+                          style: const TextStyle(fontSize: 24, color: Colors.black),
                         ),
-                        const Text(
-                          'Sign up to Continue',
+                        Text(
+                          AppLocalizations.of(context)!.sign,
                           style: TextStyle(color: Colors.grey),
                         ),
                         const SizedBox(height: 20),
                         TextField(
                           controller: _nameController,
                           obscureText: false,
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             border: OutlineInputBorder(),
-                            labelText: 'Name',
+                            labelText: AppLocalizations.of(context)!.name,
                           ),
                         ),
                         const SizedBox(height: 20),
                         TextField(
                           controller: _emailController,
                           obscureText: false,
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             border: OutlineInputBorder(),
-                            labelText: 'Email',
+                            labelText: AppLocalizations.of(context)!.email,
                           ),
                         ),
                         const SizedBox(height: 20),
                         TextField(
                           controller: _phoneNumberController,
                           obscureText: false,
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             border: OutlineInputBorder(),
-                            labelText: 'Phone number',
+                            labelText: AppLocalizations.of(context)!.phone,
                           ),
                           maxLength: 10,
                         ),
@@ -90,18 +117,18 @@ class FirstPage extends StatelessWidget {
                         TextField(
                           controller: _passwordController,
                           obscureText: true,
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             border: OutlineInputBorder(),
-                            labelText: 'New Password',
+                            labelText: AppLocalizations.of(context)!.newpass,
                           ),
                         ),
                         const SizedBox(height: 20),
                         TextField(
                           controller: _confirmPasswordController,
                           obscureText: true,
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             border: OutlineInputBorder(),
-                            labelText: 'Confirm Password',
+                            labelText: AppLocalizations.of(context)!.confirm,
                           ),
                         ),
                         const SizedBox(height: 20),
@@ -109,35 +136,53 @@ class FirstPage extends StatelessWidget {
                           onPressed: () {
                             String name = _nameController.text.trim();
                             String email = _emailController.text.trim();
-                            String phoneNumber =
-                                _phoneNumberController.text.trim();
                             String password = _passwordController.text.trim();
-                            String confirmPassword =
-                                _confirmPasswordController.text.trim();
+                            String confirmPassword = _confirmPasswordController.text.trim();
 
                             if (password == confirmPassword) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => HomeScreen(
-                                    name: name,
-                                    email: email,
-                                    phoneNumber: phoneNumber,
-                                    password: password,
-                                  ),
-                                ),
-                              );
+                              _registerUser(name, email, password).then((isRegistered) {
+                                if (isRegistered) {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => HomeScreen(
+                                        /* name: name,
+                                        email: email,
+                                        phoneNumber: _phoneNumberController.text.trim(),
+                                        password: password, */
+                                      ),
+                                    ),
+                                  );
+                                } else {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: Text('Registration Failed'),
+                                        content: Text('An error occurred during registration. Please try again.'),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            child: Text(AppLocalizations.of(context)!.ok),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                }
+                              });
                             } else {
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
                                   return AlertDialog(
                                     title: Text('Password Mismatch'),
-                                    content: Text(
-                                        'Please ensure both passwords match.'),
+                                    content: Text('Please ensure both passwords match.'),
                                     actions: <Widget>[
                                       TextButton(
-                                        child: Text('OK'),
+                                        child: Text(AppLocalizations.of(context)!.ok),
                                         onPressed: () {
                                           Navigator.of(context).pop();
                                         },
@@ -149,15 +194,14 @@ class FirstPage extends StatelessWidget {
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 15, horizontal: 40),
+                            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 40),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                          child: const Text(
-                            'Sign Up',
-                            style: TextStyle(fontSize: 20, color: Colors.white),
+                          child: Text(
+                            AppLocalizations.of(context)!.but,
+                            style: TextStyle(fontSize: 20, color: Colors.black),
                           ),
                         ),
                       ],

@@ -1,34 +1,38 @@
-import 'package:Renewify/complaint.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
-// import 'biogas_services.dart';
-import 'dashboard.dart';
+import 'biogas_services.dart';
 import 'main.dart';
 import 'monitoring.dart';
 import 'post_view_page.dart';
 import 'settings.dart';
 import 'shop.dart';
-import 'solarservices.dart';
 import 'subsidies.dart';
+import 'dashboard.dart';
+import 'solarservices.dart';
+import 'package:Renewify/gen_l10n/app_localizations.dart';
 
-class thingstoknow extends StatelessWidget {
-  const thingstoknow({Key? key}) : super(key: key);
+class MonitorBiogasPage extends StatefulWidget {
+  @override
+  _MonitorBiogasPageState createState() => _MonitorBiogasPageState();
+}
+
+class _MonitorBiogasPageState extends State<MonitorBiogasPage> {
+  double bioGasWeight = 20.0; // Sample input weight for Bio Gas (in kg)
+  double lpgGasWeight = 6; // Sample input weight for LPG Gas (in kg)
+  final double maxWeight = 25.0; // Maximum weight of a full cylinder (in kg)
+  bool hasBioGas = true; // Assume user has Bio Gas by default
+  bool hasLpgGas = true; // Assume user has LPG Gas by default
 
   @override
   Widget build(BuildContext context) {
-    final double containerHeight = 220.0;
-    final double containerHeightNOC =
-        260.0; // Increased height for NOC container
-    final double containerMargin = 16.0;
-    final double iconSize = 32.0;
-    final double iconRadius = 40.0;
+    double bioGasPercentage = (bioGasWeight / maxWeight) * 100;
+    double lpgGasPercentage = (lpgGasWeight / maxWeight) * 100;
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.green.shade300,
-        title: Text('Things to know'),
-        actions: [
+        title: Text('Biogas Monitoring'),
+          actions: [
           PopupMenuButton<String>(
             icon: FaIcon(FontAwesomeIcons.globe),
             onSelected: (String value) {
@@ -111,7 +115,7 @@ class thingstoknow extends StatelessWidget {
             ),
             ListTile(
               leading: Icon(Icons.home),
-              title: Text('Home'),
+              title: Text(AppLocalizations.of(context)!.home),
               onTap: () {
                 Navigator.pushReplacement(
                   context,
@@ -121,7 +125,7 @@ class thingstoknow extends StatelessWidget {
             ),
             ListTile(
               leading: Icon(Icons.wb_sunny),
-              title: Text('Solar Installation'),
+              title: Text(AppLocalizations.of(context)!.solar),
               onTap: () {
                 Navigator.push(
                   context,
@@ -133,7 +137,7 @@ class thingstoknow extends StatelessWidget {
             ),
             ListTile(
               leading: Icon(Icons.attach_money),
-              title: Text('Subsidies /Loans'),
+              title: Text(AppLocalizations.of(context)!.subl),
               onTap: () {
                 Navigator.push(
                   context,
@@ -144,20 +148,20 @@ class thingstoknow extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: Icon(Icons.warning_rounded),
-              title: Text('Complaints'),
+              leading: Icon(Icons.local_gas_station),
+              title: Text(AppLocalizations.of(context)!.bio),
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>  ComplaintPage(),
+                    builder: (context) => const BiogasServices(),
                   ),
                 );
               },
             ),
             ListTile(
               leading: Icon(Icons.electric_bolt),
-              title: Text('Electricity'),
+              title: Text(AppLocalizations.of(context)!.ele),
               onTap: () {
                 Navigator.push(
                   context,
@@ -168,7 +172,7 @@ class thingstoknow extends StatelessWidget {
             ),
             ListTile(
               leading: Icon(Icons.podcasts),
-              title: Text('Green Edge'),
+              title: Text(AppLocalizations.of(context)!.green),
               onTap: () {
                 Navigator.push(
                   context,
@@ -180,7 +184,7 @@ class thingstoknow extends StatelessWidget {
             ),
             ListTile(
               leading: Icon(Icons.shopping_cart),
-              title: Text('Energy Market'),
+              title: Text(AppLocalizations.of(context)!.energy),
               onTap: () {
                 Navigator.push(
                   context,
@@ -191,7 +195,7 @@ class thingstoknow extends StatelessWidget {
             Divider(),
             ListTile(
               leading: Icon(Icons.settings),
-              title: Text('Settings'),
+              title: Text(AppLocalizations.of(context)!.set),
               onTap: () {
                 Navigator.push(
                   context,
@@ -202,7 +206,7 @@ class thingstoknow extends StatelessWidget {
             ),
             ListTile(
               leading: Icon(Icons.logout),
-              title: Text('Logout'),
+              title: Text(AppLocalizations.of(context)!.logout),
               onTap: () {
                 Navigator.pushReplacement(
                   context,
@@ -214,157 +218,162 @@ class thingstoknow extends StatelessWidget {
         ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            _buildContainer(
-              color: Colors.lightBlueAccent,
-              icon: Icons.location_city,
-              title: 'No Objection Certificate',
-              text:
-                  'To apply for a No Objection Certificate (NOC) from the municipality, visit the following link:',
-              containerHeight: containerHeightNOC,
-              iconSize: iconSize,
-              iconRadius: iconRadius,
-              containerMargin: containerMargin,
-              buttonText: 'Apply for NOC',
-              buttonLink:
-                  'https://parivahan.gov.in/parivahan//en/content/no-objection-certificate',
-            ),
-            _buildContainer(
-              color: const Color.fromARGB(255, 193, 255, 114),
-              icon: Icons.info,
-              title: 'Cost of Solar Installation',
-              text:
-                  'The average cost of a solar installation today is between Rs.15,000 to Rs.20,000 per kilowatt, depending on the size of the system and other factors.',
-              containerHeight: containerHeight,
-              iconSize: iconSize,
-              iconRadius: iconRadius,
-              containerMargin: containerMargin,
-            ),
-            _buildContainer(
-              color: Color.fromARGB(235, 156, 252, 115),
-              icon: Icons.warning,
-              title: 'Subsidies for Solar Installations',
-              text:
-                  'Subsidies for solar installations can cover up to 30% of the total cost, depending on the state and the specific program.',
-              containerHeight: containerHeight,
-              iconSize: iconSize,
-              iconRadius: iconRadius,
-              containerMargin: containerMargin,
-            ),
-            _buildContainer(
-              color: const Color.fromARGB(255, 193, 255, 114),
-              icon: Icons.help,
-              title: 'Payback Period',
-              text:
-                  'The payback period for a solar installation can range from 3 to 7 years, depending on the cost of electricity and the amount of sunlight your location receives.',
-              containerHeight: containerHeight,
-              iconSize: iconSize,
-              iconRadius: iconRadius,
-              containerMargin: containerMargin,
-            ),
-            _buildContainer(
-              color: const Color.fromARGB(255, 162, 241, 129),
-              icon: Icons.check_circle,
-              title: 'Financing Options',
-              text:
-                  'Financing options for solar installations include loans, leases, and power purchase agreements (PPAs), which can help reduce the upfront cost.',
-              containerHeight: containerHeight,
-              iconSize: iconSize,
-              iconRadius: iconRadius,
-              containerMargin: containerMargin,
-            ),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  // Handle button action
+                },
+                child:  Text(AppLocalizations.of(context)!.find),
+              ),
+              const SizedBox(height: 20),
+              buildGasLevelContainer(
+                context,
+                AppLocalizations.of(context)!.biogas,
+                Icons.eco, // Cylinder icon for Bio Gas
+                bioGasPercentage,
+                hasBioGas,
+              ),
+              const SizedBox(height: 20),
+              buildGasLevelContainer(
+                context,
+                AppLocalizations.of(context)!.lpg,
+                FontAwesomeIcons.fire, // Cylinder icon for LPG Gas
+                lpgGasPercentage,
+                hasLpgGas,
+              ),
+              const SizedBox(height: 20),
+              buildGasLeakContainer(),
+            ],
+          ),
         ),
       ),
-      backgroundColor: const Color.fromARGB(255, 248, 246, 246),
     );
   }
 
-  Widget _buildContainer({
-    required Color color,
-    required IconData icon,
-    required String title,
-    required String text,
-    required double containerHeight,
-    required double iconSize,
-    required double iconRadius,
-    required double containerMargin,
-    String? buttonText,
-    String? buttonLink,
-  }) {
+  Widget buildGasLevelContainer(BuildContext context, String title,
+      IconData iconData, double percentage, bool isEnabled) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: containerMargin),
-      padding: const EdgeInsets.all(16),
-      height: containerHeight,
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: color,
         borderRadius: BorderRadius.circular(20),
+        color: isEnabled ? Colors.white : Colors.grey[300],
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: const Offset(0, 3),
+            spreadRadius: 3,
+            blurRadius: 7,
+            offset: const Offset(0, 3), // changes position of shadow
           ),
         ],
       ),
-      child: Stack(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Positioned(
-            top: 10,
-            left: 10,
-            child: CircleAvatar(
-              radius: iconRadius / 2,
-              backgroundColor: Colors.white,
-              child: Icon(
-                icon,
-                size: iconSize,
-                color: color,
+          Row(
+            children: [
+              Icon(
+                iconData,
+                size: 50,
+                color: isEnabled ? Colors.green : Colors.grey,
               ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: iconRadius + 20, top: 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
+              const SizedBox(width: 20),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    LinearProgressIndicator(
+                      value: percentage / 100,
+                      backgroundColor: Colors.grey[300],
+                      color: Colors.green,
+                      minHeight: 20,
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      '${percentage.toStringAsFixed(0)}%',
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  text,
-                  style: const TextStyle(fontSize: 16, color: Colors.black),
-                ),
-                if (buttonText != null && buttonLink != null) ...[
-                  const Spacer(),
-                  ElevatedButton(
-                    onPressed: () {
-                      launchURL(buttonLink);
-                    },
-                    child: Text(buttonText),
-                  ),
-                ],
-              ],
-            ),
+              ),
+            ],
           ),
         ],
       ),
     );
   }
 
-  void launchURL(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
+  Widget buildGasLeakContainer() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 3,
+            blurRadius: 7,
+            offset: const Offset(0, 3), // changes position of shadow
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            AppLocalizations.of(context)!.gas,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 10),
+           Text(
+            AppLocalizations.of(context)!.add,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 10),
+           Text(
+            AppLocalizations.of(context)!.num1,
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.red,
+            ),
+          ),
+           Text(
+            AppLocalizations.of(context)!.num2,
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.red,
+            ),
+          ),
+           Text(
+            AppLocalizations.of(context)!.num3,
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.red,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
