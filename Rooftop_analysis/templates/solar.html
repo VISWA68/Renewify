@@ -1,0 +1,244 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solar Rooftop Calculator</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #e9f5e9;
+            overflow-x: hidden;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #a8e6cf, #dcedc1);
+            animation: backgroundShift 15s ease infinite;
+            min-height: 100vh;
+        }
+        h1 {
+            text-align: center;
+            color: #2e7d32;
+            font-size: 3em;
+            margin-bottom: 20px;
+            animation: fadeInDown 1s ease;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        label {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            color: #388e3c;
+        }
+        input[type="number"] {
+            width: 100px;
+            padding: 10px;
+            margin-bottom: 20px;
+            font-size: 1.2em;
+            border: 2px solid #388e3c;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        input[type="number"]:focus {
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(56, 142, 60, 0.5);
+        }
+        button {
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 30px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        button:hover {
+            background-color: #388e3c;
+            transform: scale(1.1);
+        }
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            width: 100%;
+            max-width: 1200px;
+            margin-top: 30px;
+            animation: fadeInUp 1s ease;
+        }
+        .result-block {
+            background-color: #f1f8e9;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-align: center;
+        }
+        .result-block:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+        .environment-impact {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #fffde7;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 1200px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 2s ease;
+            flex-wrap: wrap;
+        }
+        .impact-item {
+            text-align: center;
+            font-size: 1.2em;
+            color: #2e7d32;
+            margin: 10px;
+            animation: fadeIn 2s ease;
+            transition: transform 0.3s ease;
+            flex: 1 1 200px;
+        }
+        .impact-item:hover {
+            transform: scale(1.1);
+        }
+        .impact-item img {
+            display: block;
+            margin: 0 auto 10px;
+            width: 60px;
+            transition: transform 0.3s ease;
+        }
+        .impact-item:hover img {
+            transform: rotate(20deg) scale(1.2);
+        }
+        /* Keyframes for animations */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes backgroundShift {
+            0% { background: linear-gradient(135deg, #a8e6cf, #dcedc1); }
+            50% { background: linear-gradient(135deg, #dcedc1, #a8e6cf); }
+            100% { background: linear-gradient(135deg, #a8e6cf, #dcedc1); }
+        }
+    </style>
+    <script>
+    function updateValues() {
+        const numPanels = parseInt(document.getElementById("num-panels").value) || 4; // Default to 4 if input is empty
+        document.getElementById("num-panels-value").innerText = numPanels + " panels";
+
+        // Perform calculations
+        const capacity = numPanels * 1.7;
+        const costPerPanel = 46000;
+        const projectCost = numPanels * costPerPanel;
+        const subsidyRate = 0.42;
+        const subsidy = projectCost * subsidyRate;
+        const consumerShare = projectCost - subsidy;
+        const paybackPeriod = 5 + (capacity * 0.1);
+        const returnOnInvestment = 20 + (capacity * 0.5);
+        const financialSavingsPerDay = capacity * 12;
+        const financialSavingsPerYear = financialSavingsPerDay * 365;
+        const emissionSavings = capacity * 1.5;
+        const carsOffRoad = emissionSavings / 4.6;
+        const treesPlanted = emissionSavings * 15;
+        const co2Reduction = emissionSavings * 1.2;
+
+        // Update UI with calculated values
+        document.getElementById("capacity-value").innerText = capacity.toFixed(2) + " kW";
+        document.getElementById("payback-period").innerText = paybackPeriod.toFixed(2) + " years";
+        document.getElementById("return-on-investment").innerText = returnOnInvestment.toFixed(2) + "%";
+        document.getElementById("project-cost").innerText = "Rs. " + projectCost.toFixed(2);
+        document.getElementById("subsidy").innerText = "Rs. " + subsidy.toFixed(2);
+        document.getElementById("consumer-share").innerText = "Rs. " + consumerShare.toFixed(2);
+        document.getElementById("financial-savings-per-day").innerText = "Rs. " + financialSavingsPerDay.toFixed(2) + "/day";
+        document.getElementById("financial-savings-per-year").innerText = "Rs. " + financialSavingsPerYear.toFixed(2) + "/Year";
+        document.getElementById("emission-savings").innerText = emissionSavings.toFixed(2) + " Tonne CO2";
+
+        // Update environmental impact
+        document.getElementById("cars-off-road").innerText = carsOffRoad.toFixed(2) + " cars";
+        document.getElementById("trees-planted").innerText = treesPlanted.toFixed(2) + " trees";
+        document.getElementById("co2-reduction").innerText = co2Reduction.toFixed(2) + " tons/year";
+    }
+
+    // Initial call to update values on page load
+    document.addEventListener('DOMContentLoaded', updateValues);
+</script>
+
+</head>
+<body>
+
+    <div class="container">
+        <h1>Rooftop Solar Plant Calculator</h1>
+        <form>
+            <label for="num-panels">Select Number of Solar Panels:</label>
+            <input type="number" id="num-panels" name="num-panels" min="1" max="100" value="4" oninput="updateValues()">
+            <span id="num-panels-value">4 panels</span>
+            <p>Capacity: <span id="capacity-value">6.8 kW</span></p>
+        </form>
+
+        <!-- Results Grid Section -->
+        <div class="results-grid">
+            <div class="result-block">
+                <p><strong>Payback Period: <span id="payback-period">{{ payback_period }} years</span></strong></p>
+            </div>
+            <div class="result-block">
+                <p><strong>Return on Investment: <span id="return-on-investment">{{ return_on_investment }}%</span></strong></p>
+            </div>
+            <div class="result-block">
+                <p><strong>Project Cost: <span id="project-cost">Rs. {{ project_cost }}</span></strong></p>
+            </div>
+            <div class="result-block">
+                <p><strong>Subsidy: <span id="subsidy">Rs. {{ subsidy }}</span></strong></p>
+            </div>
+            <div class="result-block">
+                <p><strong>Consumer Share: <span id="consumer-share">Rs. {{ consumer_share }}</span></strong></p>
+            </div>
+            <div class="result-block">
+                <p><strong>Financial Savings: <span id="financial-savings-per-day">Rs. {{ financial_savings_per_day }}</span> per day</strong></p>
+            </div>
+            <div class="result-block">
+                <p><strong>Financial Savings: <span id="financial-savings-per-year">Rs. {{ financial_savings_per_year }}</span> per year</strong></p>
+            </div>
+            <div class="result-block">
+                <p><strong>Emission Savings: <span id="emission-savings">{{ emission_savings }} Tonne CO2</span></strong></p>
+            </div>
+        </div>
+
+        <!-- Environmental Impact Section -->
+        <div class="environment-impact">
+            <div class="impact-item">
+                <img src="https://img.icons8.com/ios-filled/50/000000/car.png" alt="Cars off the road">
+                <p><strong>Cars off the Road:</strong> <span id="cars-off-road">{{ cars_off_road }} cars</span></p>
+            </div>
+            <div class="impact-item">
+                <img src="https://img.icons8.com/ios-filled/50/000000/deciduous-tree.png" alt="Trees Planted">
+                <p><strong>Trees Planted:</strong> <span id="trees-planted">{{ trees_planted }} trees</span></p>
+            </div>
+            <div class="impact-item">
+                <img src="https://img.icons8.com/ios-filled/50/000000/co2.png" alt="CO2 Reduction">
+                <p><strong>CO2 Reduction:</strong> <span id="co2-reduction">{{ co2_reduction }} tons/year</span></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
