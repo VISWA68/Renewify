@@ -5,6 +5,7 @@ from flask_cors import CORS
 import logging
 from dotenv import load_dotenv
 import os
+import uuid
 
 load_dotenv()
 
@@ -39,26 +40,22 @@ def register_seller():
     try:
         data = request.json
 
-        # Check for missing fields
         required_fields = ['name', 'email', 'password', 'phone']
         for field in required_fields:
             if field not in data:
                 return jsonify({"error": f"Missing {field}"}), 400
 
-        # Check if email already exists
         if users_collection.find_one({"email": data["email"]}):
             return jsonify({"error": "Email already exists"}), 400
 
-        # Create seller user
         user = {
             "name": data["name"],
             "email": data["email"],
-            "password": data["password"],  # Hash password in production
+            "password": data["password"],  
             "phone": data["phone"]
         }
         user_id = users_collection.insert_one(user).inserted_id
 
-        # Create seller profile
         seller = {
             "user_id": str(user_id),
             "name": data["name"],
@@ -81,7 +78,7 @@ def login():
 
         # Validate user
         user = users_collection.find_one({"email": data["email"]})
-        if not user or user["password"] != data["password"]:  # Use hashed passwords in production
+        if not user or user["password"] != data["password"]:  
             return jsonify({"error": "Invalid credentials"}), 401
 
         # Fetch seller profile
@@ -89,7 +86,6 @@ def login():
         if not seller:
             return jsonify({"error": "Seller profile not found"}), 404
 
-        # Check if seller has shops
         shop = shops_collection.find_one({"seller_id": str(seller["_id"])})
 
         response = {
@@ -98,7 +94,7 @@ def login():
         }
 
         if shop:
-            response["shop_id"] = str(shop["_id"])  # Include shop_id if shop exists
+            response["shop_id"] = str(shop["_id"]) 
 
         return jsonify(response), 200
 
@@ -111,34 +107,28 @@ def create_shop():
     try:
         data = request.json
 
-        # Validate seller
         seller = sellers_collection.find_one({"_id": ObjectId(data["seller_id"])})
         if not seller:
             return jsonify({"error": "Seller not found"}), 404
 
-        # Generate the shop_id
         shop_id = ObjectId()
 
-        # Create shop with the shop_id included
         shop = {
-            "_id": shop_id,  # Explicitly set the shop_id
+            "_id": shop_id,  
             "seller_id": data["seller_id"],
             "shop_name": data["shop_name"],
             "address": data["address"],
             "upi_id": data["upi_id"],
-            "shop_image": data.get("shop_image", ""),  # Optional field
+            "shop_image": data.get("shop_image", ""), 
         }
 
-        # Insert shop into the shops collection
         shops_collection.insert_one(shop)
 
-        # Update the seller with the shop_id
         sellers_collection.update_one(
             {"_id": ObjectId(data["seller_id"])},
             {"$push": {"shops": str(shop_id)}}
         )
 
-        # Return the full shop object in the response
         return jsonify({
             "message": "Shop created successfully",
         }), 201
@@ -152,17 +142,14 @@ def add_product():
     try:
         data = request.json
         print(f"Incoming request: {data}")
-        # Validate shop
         shop = shops_collection.find_one({"_id": ObjectId(data["shop_id"])})
         if not shop:
             return jsonify({"error": "Shop not found"}), 404
 
-        # Validate seller
         seller = sellers_collection.find_one({"_id": ObjectId(data["seller_id"])})
         if not seller:
             return jsonify({"error": "Seller not found"}), 404
 
-        # Create product
         product = {
             "shop_id": data["shop_id"],
             "seller_id": data["seller_id"],
@@ -181,12 +168,10 @@ def add_product():
 @app.route('/shops/<string:seller_id>', methods=['GET'])
 def get_shops_by_seller(seller_id):
     try:
-        # Validate seller
         seller = sellers_collection.find_one({"_id": ObjectId(seller_id)})
         if not seller:
             return jsonify({"error": "Seller not found"}), 404
 
-        # Fetch shops and their products
         shops = list(shops_collection.find({"seller_id": seller_id}))
         for shop in shops:
             products = list(products_collection.find({"shop_id": str(shop["_id"])}))
@@ -200,21 +185,17 @@ def get_shops_by_seller(seller_id):
 @app.route('/shops', methods=['GET'])
 def get_all_shops():
     try:
-        # Fetch all shops from the collection
         shops = list(shops_collection.find({}))
 
-        # Convert ObjectId to string and format the response
         shops_data = []
         for shop in shops:
-            # Fetch products associated with this shop
             shop_id = str(shop["_id"])
             products = list(products_collection.find({"shop_id": shop_id}))
 
-            # Format product details
             products_data = [
                 {
                     "name": product.get("name", ""),
-                    "price": float(product.get("price", 0.0)),  # Ensure price is returned as float
+                    "price": float(product.get("price", 0.0)), 
                     "image": product.get("image", "")
                 }
                 for product in products
@@ -243,15 +224,12 @@ def get_all_shops():
 @app.route('/seller/<string:seller_id>', methods=['GET'])
 def get_seller_details(seller_id):
     try:
-        # Fetch seller information
         seller = sellers_collection.find_one({"_id": ObjectId(seller_id)})
         if not seller:
             return jsonify({"error": "Seller not found"}), 404
 
-        # Fetch shop details associated with the seller
         shops = list(shops_collection.find({"seller_id": seller_id}))
         for shop in shops:
-            # Fetch products associated with each shop
             products = list(products_collection.find({"shop_id": str(shop['_id'])}))
             shop['products'] = serialize_object_id(products)
 
@@ -274,32 +252,28 @@ def register_service_provider():
     try:
         data = request.json
 
-        # Check for missing fields
         required_fields = ['name', 'email', 'password', 'phone', 'service_type']
         for field in required_fields:
             if field not in data:
                 return jsonify({"error": f"Missing {field}"}), 400
 
-        # Check if email already exists
         if users_collection.find_one({"email": data["email"]}):
             return jsonify({"error": "Email already exists"}), 400
 
-        # Create service provider user
         user = {
             "name": data["name"],
             "email": data["email"],
-            "password": data["password"],  # Hash password in production
+            "password": data["password"],  
             "phone": data["phone"]
         }
         user_id = users_collection.insert_one(user).inserted_id
 
-        # Create service provider profile
         service_provider = {
             "user_id": str(user_id),
             "name": data["name"],
             "email": data["email"],
             "phone": data["phone"],
-            "service_type": data["service_type"],  # 'Installation', 'Service', or 'Both'
+            "service_type": data["service_type"],  
         }
         service_provider_id = service_providers_collection.insert_one(service_provider).inserted_id
 
@@ -316,10 +290,9 @@ def login_service_provider():
 
         # Validate user
         user = users_collection.find_one({"email": data["email"]})
-        if not user or user["password"] != data["password"]:  # Use hashed passwords in production
+        if not user or user["password"] != data["password"]: 
             return jsonify({"error": "Invalid credentials"}), 401
 
-        # Fetch service provider profile
         service_provider = service_providers_collection.find_one({"email": data["email"]})
         if not service_provider:
             return jsonify({"error": "Service provider profile not found"}), 404
@@ -327,7 +300,7 @@ def login_service_provider():
         response = {
             "message": "Login successful",
             "service_provider_id": str(service_provider["_id"]),
-            "service_type": service_provider["service_type"],  # Return service type
+            "service_type": service_provider["service_type"],  
         }
 
         return jsonify(response), 200
@@ -339,7 +312,6 @@ def login_service_provider():
 @app.route('/get_service_provider/<string:service_provider_id>', methods=['GET'])
 def get_service_provider_details(service_provider_id):
     try:
-        # Fetch service provider information
         service_provider = service_providers_collection.find_one({"_id": ObjectId(service_provider_id)})
         if not service_provider:
             return jsonify({"error": "Service provider not found"}), 404
@@ -349,7 +321,7 @@ def get_service_provider_details(service_provider_id):
             "name": service_provider["name"],
             "email": service_provider["email"],
             "phone": service_provider["phone"],
-            "service_type": service_provider["service_type"],  # Return service type
+            "service_type": service_provider["service_type"], 
         }
 
         return jsonify(service_provider_data), 200
@@ -357,90 +329,104 @@ def get_service_provider_details(service_provider_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
 @app.route('/request_service', methods=['POST'])
 def request_service():
     try:
         data = request.json
 
-        # Check for missing fields
         required_fields = ['name', 'phone', 'location', 'title', 'issue']
         for field in required_fields:
             if field not in data:
                 return jsonify({"error": f"Missing {field}"}), 400
 
-        # Create service request
+        request_id = str(uuid.uuid4())
+
         service_request = {
             "type": "Service",
             "name": data["name"],
             "phone": data["phone"],
             "location": data["location"],
             "title": data["title"],
-            "issue": data["issue"]
+            "issue": data["issue"],
+            "request_id": request_id,  
         }
 
-        # Insert the service request into the requests collection
-        request_id = mongo.db.requests.insert_one(service_request).inserted_id
+        mongo.db.requests.insert_one(service_request)
 
-        return jsonify({"message": "Service request submitted successfully", "request_id": str(request_id)}), 201
+        return jsonify({"message": "Service request submitted successfully", "request_id": request_id}), 201
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 @app.route('/request_installation', methods=['POST'])
 def request_installation():
     try:
         data = request.json
 
-        # Check for missing fields
         required_fields = ['name', 'phone', 'location']
         for field in required_fields:
             if field not in data:
                 return jsonify({"error": f"Missing {field}"}), 400
 
-        # Create installation request
+        request_id = str(uuid.uuid4())
+
         installation_request = {
             "type": "Installation",
             "name": data["name"],
             "phone": data["phone"],
-            "location": data["location"]
+            "location": data["location"],
+            "request_id": request_id,  
         }
 
-        # Insert the installation request into the requests collection
-        request_id = mongo.db.requests.insert_one(installation_request).inserted_id
+        mongo.db.requests.insert_one(installation_request)
 
-        return jsonify({"message": "Installation request submitted successfully", "request_id": str(request_id)}), 201
+        return jsonify({"message": "Installation request submitted successfully", "request_id": request_id}), 201
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
 
 @app.route('/get_requests', methods=['GET'])
 def get_requests():
     try:
-        # Get service provider's user_id (This should come from the logged-in user's session or token)
-        user_id = request.args.get('user_id')
 
-        if not user_id:
+        object_id_str = request.args.get('user_id')  
+        if not object_id_str:
             return jsonify({"error": "User ID is required"}), 400
 
-        # Fetch service provider's profile
-        provider = sellers_collection.find_one({"user_id": user_id})
+        try:
+            object_id = ObjectId(object_id_str)  
+        except Exception as e:
+            return jsonify({"error": "Invalid ObjectId format"}), 400
+
+        provider = mongo.db.service_providers.find_one({"_id": object_id})  
 
         if not provider:
             return jsonify({"error": "Service provider not found"}), 404
 
-        service_type = provider.get("service_type")  # 'installation', 'service', or 'both'
+        service_type = provider.get("service_type")
 
-        # Fetch requests based on service provider's type
+        if service_type not in ['Both', 'Installation', 'Service']:
+            return jsonify({"error": "Invalid service type"}), 400
+
         if service_type == 'Both':
-            requests = list(mongo.db.requests.find({}))
+            requests = list(mongo.db.requests.find({}))  
         else:
-            requests = list(mongo.db.requests.find({"type": service_type}))
+            requests = list(mongo.db.requests.find({"type": service_type})) 
 
-        # Return the requests
+        requests = [
+            {key: str(value) if key == "_id" else value for key, value in req.items()}
+            for req in requests
+        ]
+
         return jsonify({"requests": requests}), 200
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 
 ###################################################################################################################
