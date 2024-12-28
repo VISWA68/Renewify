@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vendor_app/entry.dart';
-import 'package:vendor_app/pages/shop/login.dart';
 
 import 'package:vendor_app/provider/sellerProvider.dart';
 import 'package:vendor_app/provider/shopProvider.dart';
@@ -31,5 +30,5 @@ class RenewifyApp extends StatelessWidget {
 }
 
 class Url {
-  static const String url = "http://192.168.23.5:8000";
+  static const String url = "https://983e-14-195-39-82.ngrok-free.app";
 }

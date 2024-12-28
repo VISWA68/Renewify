@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:vendor_app/main.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:vendor_app/pages/service_provider/service_login.dart';
 
 class ServiceProviderHome extends StatefulWidget {
   final String userId;
@@ -37,13 +38,12 @@ class _ServiceProviderRequestsPageState extends State<ServiceProviderHome> {
 
   // Function to launch Google Maps
   _launchMap(String location) async {
-    final Uri mapUrl =
-        Uri.parse('https://www.google.com/maps/search/?q=$location');
-    print('Launching map with URL: $mapUrl');
-
+    final Uri mapUrl = Uri.parse(location);
     try {
+      // Check if the URL can be launched
       if (await canLaunch(mapUrl.toString())) {
-        await launch(mapUrl.toString());
+        await launch(mapUrl.toString(),
+            forceSafariVC: false, forceWebView: false);
       } else {
         throw 'Could not launch $mapUrl';
       }
@@ -72,8 +72,8 @@ class _ServiceProviderRequestsPageState extends State<ServiceProviderHome> {
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              leading: Icon(Icons.check),
-              title: Text("Accept Request"),
+              leading: Icon(Icons.check, color: Colors.green),
+              title: Text("Accept Request", style: TextStyle(fontSize: 18)),
               onTap: () {
                 // Handle accept request logic here
                 Navigator.pop(ctx);
@@ -82,8 +82,8 @@ class _ServiceProviderRequestsPageState extends State<ServiceProviderHome> {
               },
             ),
             ListTile(
-              leading: Icon(Icons.call),
-              title: Text("Make a Call"),
+              leading: Icon(Icons.call, color: Colors.blue),
+              title: Text("Make a Call", style: TextStyle(fontSize: 18)),
               onTap: () {
                 _makeCall(request['phone']);
                 Navigator.pop(ctx);
@@ -98,7 +98,26 @@ class _ServiceProviderRequestsPageState extends State<ServiceProviderHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Requests')),
+      appBar: AppBar(
+        title: Text('Requests'),
+        centerTitle: true,
+        leading: SizedBox(),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ServiceProviderLoginPage(),
+                  ));
+            },
+            child: Text(
+              'Logout',
+              style: TextStyle(color: Colors.black),
+            ),
+          ),
+        ],
+      ),
       body: FutureBuilder<List<dynamic>>(
         future: requests,
         builder: (ctx, snapshot) {
@@ -115,6 +134,9 @@ class _ServiceProviderRequestsPageState extends State<ServiceProviderHome> {
                 return Card(
                   elevation: 5,
                   margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
                   child: ListTile(
                     contentPadding: EdgeInsets.all(16.0),
                     title: Text(

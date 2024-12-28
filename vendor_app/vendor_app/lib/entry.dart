@@ -4,31 +4,36 @@ import 'package:vendor_app/pages/shop/login.dart';
 
 class EntryPage extends StatefulWidget {
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _EntryPageState createState() => _EntryPageState();
 }
 
-class _LoginPageState extends State<EntryPage> {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-
+class _EntryPageState extends State<EntryPage> {
   @override
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           ClipPath(
             clipper: MyClipper(),
             child: Container(
               width: double.infinity,
               height: height * 0.4,
-              color: const Color.fromARGB(219, 201, 235, 206),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xFF6ECF81), Color(0xFF3D9140)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
               child: const Center(
                 child: Text(
-                  "Welcome",
+                  "Welcome to Renewify",
                   style: TextStyle(
-                    fontSize: 28,
+                    fontSize: 30,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
@@ -36,35 +41,65 @@ class _LoginPageState extends State<EntryPage> {
               ),
             ),
           ),
+          SizedBox(height: 40),
           Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+            padding: const EdgeInsets.symmetric(horizontal: 30.0),
             child: Column(
               children: [
-                ElevatedButton(
+                _buildCustomButton(
+                  text: 'Login as Shop',
                   onPressed: () {
                     Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => LoginPage(),
-                        ));
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => LoginPage(),
+                      ),
+                    );
                   },
-                  child: const Text('Login as Shop'),
                 ),
-                ElevatedButton(
+                SizedBox(height: 20),
+                _buildCustomButton(
+                  text: 'Login as Service Provider',
                   onPressed: () {
                     Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ServiceProviderLoginPage(),
-                        ));
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ServiceProviderLoginPage(),
+                      ),
+                    );
                   },
-                  child: const Text('Login as Service Provider'),
                 ),
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildCustomButton(
+      {required String text, required VoidCallback onPressed}) {
+    return Container(
+      width: double.infinity,
+      height: 70,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          foregroundColor: Colors.white,
+          backgroundColor: Color(0xFF4CAF50),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(25),
+          ),
+          padding: EdgeInsets.symmetric(vertical: 15),
+          elevation: 8,
+        ),
+        onPressed: onPressed,
+        child: Text(
+          text,
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
     );
   }

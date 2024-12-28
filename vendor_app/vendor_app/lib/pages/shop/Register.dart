@@ -17,7 +17,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController numberController = TextEditingController();
 
-  Future<void> login() async {
+  Future<void> register() async {
     final response = await http.post(
       Uri.parse('${Url.url}/register'),
       headers: {'Content-Type': 'application/json'},
@@ -45,24 +45,28 @@ class _RegisterPageState extends State<RegisterPage> {
     final double height = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Renewify Seller')),
-      resizeToAvoidBottomInset:
-          true, 
-      body: Stack(
-        children: [
-          ClipPath(
-            clipper: MyClipper(),
-            child: Container(
-              width: double.infinity,
-              height: height * 0.5,
-              color: const Color.fromARGB(219, 201, 235, 206),
-              child: Transform.translate(
-                offset: const Offset(0, -40),
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            ClipPath(
+              clipper: MyClipper(),
+              child: Container(
+                width: double.infinity,
+                height: height * 0.4,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Color(0xFF6ECF81), Color(0xFF3D9140)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                ),
                 child: const Center(
                   child: Text(
-                    "Register",
+                    "Register your Shop",
                     style: TextStyle(
-                      fontSize: 28,
+                      fontSize: 30,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
@@ -70,52 +74,77 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
               ),
             ),
-          ),
-
-          SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30.0),
               child: Column(
                 children: [
-                  const SizedBox(height: 225),
                   TextField(
                     controller: nameController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'User Name',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  TextField(
-                    controller: emailController,
-                    decoration: const InputDecoration(
-                      labelText: 'Email',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  TextField(
-                    controller: passwordController,
-                    decoration: const InputDecoration(
-                      labelText: 'Password',
-                      border: OutlineInputBorder(),
-                    ),
-                    obscureText: true,
-                  ),
-                  const SizedBox(height: 10),
-                  TextField(
-                    controller: numberController,
-                    decoration: const InputDecoration(
-                      labelText: 'Mobile Number',
-                      border: OutlineInputBorder(),
+                      labelStyle: TextStyle(color: Colors.teal),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.teal, width: 2),
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: login,
-                    child: const Text('Register'),
+                  TextField(
+                    controller: emailController,
+                    decoration: InputDecoration(
+                      labelText: 'Email',
+                      labelStyle: TextStyle(color: Colors.teal),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.teal, width: 2),
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
                   ),
-                  ElevatedButton(
+                  const SizedBox(height: 20),
+                  TextField(
+                    controller: passwordController,
+                    decoration: InputDecoration(
+                      labelText: 'Password',
+                      labelStyle: TextStyle(color: Colors.teal),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.teal, width: 2),
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    obscureText: true,
+                  ),
+                  const SizedBox(height: 20),
+                  TextField(
+                    controller: numberController,
+                    decoration: InputDecoration(
+                      labelText: 'Mobile Number',
+                      labelStyle: TextStyle(color: Colors.teal),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.teal, width: 2),
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                  _buildCustomButton(
+                    text: 'Register',
+                    onPressed: register,
+                  ),
+                  const SizedBox(height: 20),
+                  Text("Already have an account?",
+                      style: TextStyle(fontSize: 16)),
+                  _buildCustomButton(
+                    text: 'Login',
                     onPressed: () {
                       Navigator.push(
                         context,
@@ -124,13 +153,39 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
                       );
                     },
-                    child: const Text('Login'),
                   ),
                 ],
               ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCustomButton(
+      {required String text, required VoidCallback onPressed}) {
+    return Container(
+      width: double.infinity,
+      height: 60,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          foregroundColor: Colors.white,
+          backgroundColor: Color(0xFF4CAF50),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(25),
           ),
-        ],
+          padding: EdgeInsets.symmetric(vertical: 15),
+          elevation: 8,
+        ),
+        onPressed: onPressed,
+        child: Text(
+          text,
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
     );
   }

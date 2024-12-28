@@ -38,7 +38,6 @@ class _LoginPageState extends State<LoginPage> {
       if (shopId != null) {
         Provider.of<ShopProvider>(context, listen: false).shopId = shopId;
       }
-      print(shopId);
 
       Navigator.push(
         context,
@@ -58,66 +57,117 @@ class _LoginPageState extends State<LoginPage> {
     final double height = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Renewify Seller - Login')),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            ClipPath(
-              clipper: MyClipper(),
-              child: Container(
-                width: double.infinity,
-                height: height * 0.4,
-                color: const Color.fromARGB(219, 201, 235, 206),
-                child: const Center(
-                  child: Text(
-                    "Login",
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+      backgroundColor: Colors.white,
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          ClipPath(
+            clipper: MyClipper(),
+            child: Container(
+              width: double.infinity,
+              height: height * 0.4,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xFF6ECF81), Color(0xFF3D9140)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+              child: const Center(
+                child: Text(
+                  "Shop Login",
+                  style: TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
                 ),
               ),
             ),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
-              child: Column(
-                children: [
-                  TextField(
-                    controller: emailController,
-                    decoration: const InputDecoration(labelText: 'Email'),
+          ),
+          SizedBox(height: 40),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 30.0),
+            child: Column(
+              children: [
+                TextField(
+                  controller: emailController,
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    labelStyle: TextStyle(color: Colors.teal),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.teal, width: 2),
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
-                  const SizedBox(height: 10),
-                  TextField(
-                    controller: passwordController,
-                    decoration: const InputDecoration(labelText: 'Password'),
-                    obscureText: true,
+                ),
+                const SizedBox(height: 20),
+                TextField(
+                  controller: passwordController,
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    labelStyle: TextStyle(color: Colors.teal),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.teal, width: 2),
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: login,
-                    child: const Text('Login'),
-                  ),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  Text("Not registered"),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => RegisterPage(),
-                          ));
-                    },
-                    child: Text('Register here'),
-                  ),
-                ],
-              ),
+                  obscureText: true,
+                ),
+                const SizedBox(height: 30),
+                _buildCustomButton(
+                  text: 'Login',
+                  onPressed: login,
+                ),
+                const SizedBox(
+                  height: 30,
+                ),
+                Text("Not registered", style: TextStyle(fontSize: 16)),
+                _buildCustomButton(
+                  text: 'Register here',
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => RegisterPage(),
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
-          ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCustomButton(
+      {required String text, required VoidCallback onPressed}) {
+    return Container(
+      width: double.infinity,
+      height: 70,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          foregroundColor: Colors.white,
+          backgroundColor: Color(0xFF4CAF50),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(25),
+          ),
+          padding: EdgeInsets.symmetric(vertical: 15),
+          elevation: 8,
+        ),
+        onPressed: onPressed,
+        child: Text(
+          text,
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );
