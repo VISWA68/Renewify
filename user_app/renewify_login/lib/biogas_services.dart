@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:renewify_login/gen_l10n/app_localizations.dart';
 
 import 'package:url_launcher/url_launcher.dart';
 import 'biomonitor.dart';
@@ -15,7 +16,6 @@ import 'settings.dart';
 import 'shop.dart';
 import 'solarservices.dart';
 import 'subsidies.dart';
-import 'package:Renewify/gen_l10n/app_localizations.dart';
 
 class BiogasServices extends StatefulWidget {
   const BiogasServices({Key? key}) : super(key: key);

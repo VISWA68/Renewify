@@ -1,13 +1,24 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:provider/provider.dart';
+import 'package:renewify_login/gen_l10n/app_localizations.dart';
+import 'package:renewify_login/provider/location_provider.dart';
 import 'dashboard1.dart';
-import 'package:Renewify/gen_l10n/app_localizations.dart';
 import 'first_page.dart';
 import 'package:http/http.dart' as http; // For encoding the data to JSON
 
 void main() {
-  runApp(MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<LocationProvider>(
+          create: (context) => LocationProvider(),
+        ),
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -15,11 +26,12 @@ class MyApp extends StatefulWidget {
   _MyAppState createState() => _MyAppState();
 
   // This method allows accessing the state of MyApp
-  static _MyAppState? of(BuildContext context) => context.findAncestorStateOfType<_MyAppState>();
+  static _MyAppState? of(BuildContext context) =>
+      context.findAncestorStateOfType<_MyAppState>();
 }
 
 class _MyAppState extends State<MyApp> {
-  Locale? _locale;  // Default locale
+  Locale? _locale; // Default locale
 
   void setLocale(Locale locale) {
     setState(() {
@@ -37,11 +49,7 @@ class _MyAppState extends State<MyApp> {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: const [
-        Locale('en'),
-        Locale('ta'),
-        Locale('hi')
-      ],
+      supportedLocales: const [Locale('en'), Locale('ta'), Locale('hi')],
       home: HomeScreen(),
     );
   }
@@ -80,7 +88,8 @@ class HomeScreen extends StatelessWidget {
           Global.csrfToken = csrfToken;
         }
 
-        if (responseBody.containsKey('detail') && responseBody['detail'] == 'Authenticated successfully') {
+        if (responseBody.containsKey('detail') &&
+            responseBody['detail'] == 'Authenticated successfully') {
           // Store the username globally
           Global.name = username;
           return true;
@@ -133,7 +142,8 @@ class HomeScreen extends StatelessWidget {
                           ),
                           Text(
                             AppLocalizations.of(context)!.login,
-                            style: const TextStyle(fontSize: 20, color: Colors.black),
+                            style: const TextStyle(
+                                fontSize: 20, color: Colors.black),
                           ),
                           const SizedBox(height: 5),
                           Text(
@@ -169,12 +179,19 @@ class HomeScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 20),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 10),
                             child: OutlinedButton(
                               onPressed: () {
                                 String username = _nameController.text.trim();
-                                String password = _passwordController.text.trim();
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => DashBoard(name: username),));
+                                String password =
+                                    _passwordController.text.trim();
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          DashBoard(name: username),
+                                    ));
                                 // _loginUser(username, password).then((isAuthenticated) {
                                 //   if (isAuthenticated) {
                                 //     Navigator.pushReplacement(
@@ -203,17 +220,18 @@ class HomeScreen extends StatelessWidget {
                                 //     );
                                 //   }
                                 // }
-                                
                               },
                               style: OutlinedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 40, vertical: 15),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                               ),
                               child: Text(
                                 AppLocalizations.of(context)!.login,
-                                style: const TextStyle(fontSize: 20, color: Colors.black),
+                                style: const TextStyle(
+                                    fontSize: 20, color: Colors.black),
                               ),
                             ),
                           ),
@@ -260,7 +278,7 @@ class HomeScreen extends StatelessWidget {
 class Global {
   static String? sessionCookie;
   static String? csrfToken;
-  static String? name;  
+  static String? name;
 }
 
 class MyClipper extends CustomClipper<Path> {

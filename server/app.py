@@ -447,13 +447,13 @@ def get_complaints():
 ###################################################################################################################
 def recommend_panel_type(power_input, space_input):
     # Define logic based on input strings
-    if power_input == "less than 400 units" and space_input == "less space":
+    if power_input == "Less than 400 units" and space_input == "Less space":
         return "monocrystalline"
-    elif power_input == "more than 400 units" and space_input == "less space":
+    elif power_input == "More than 400 units" and space_input == "Less space":
         return "monocrystalline"
-    elif power_input == "less than 400 units" and space_input == "more space":
+    elif power_input == "Less than 400 units" and space_input == "More space":
         return "polycrystalline, monocrystalline"
-    elif power_input == "more than 400 units" and space_input == "more space":
+    elif power_input == "More than 400 units" and space_input == "More space":
         return "polycrystalline"
     else:
         return "Invalid input"

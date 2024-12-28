@@ -277,9 +277,10 @@
 // }
 
 
-import 'package:Renewify/complaint.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:renewify_login/complaint.dart';
+import 'package:renewify_login/gen_l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dashboard.dart';
 import 'main.dart';
@@ -288,7 +289,6 @@ import 'post_view_page.dart';
 import 'settings.dart';
 import 'shop.dart';
 import 'solarservices.dart';
-import 'package:Renewify/gen_l10n/app_localizations.dart';
 
 class SubsidiesPage extends StatefulWidget {
   const SubsidiesPage({Key? key}) : super(key: key);

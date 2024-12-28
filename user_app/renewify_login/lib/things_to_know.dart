@@ -1,6 +1,6 @@
-import 'package:Renewify/complaint.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:renewify_login/complaint.dart';
 import 'package:url_launcher/url_launcher.dart';
 // import 'biogas_services.dart';
 import 'dashboard.dart';
@@ -36,7 +36,7 @@ class thingstoknow extends StatelessWidget {
                 MyApp.of(context)!.setLocale(const Locale('en'));
               } else if (value == 'ta') {
                 MyApp.of(context)!.setLocale(const Locale('ta'));
-              } else if(value =='hi'){
+              } else if (value == 'hi') {
                 MyApp.of(context)!.setLocale(const Locale('hi'));
               }
             },
@@ -150,7 +150,7 @@ class thingstoknow extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>  ComplaintPage(),
+                    builder: (context) => ComplaintPage(),
                   ),
                 );
               },

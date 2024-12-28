@@ -1,6 +1,6 @@
-import 'package:Renewify/main.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:renewify_login/main.dart';
 
 class Output1 extends StatelessWidget {
   @override

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:renewify_login/gen_l10n/app_localizations.dart';
 // import 'biogas_services.dart';
 import 'main.dart';
 import 'monitoring.dart';
@@ -9,7 +10,6 @@ import 'settings.dart';
 import 'shop.dart';
 import 'solarservices.dart';
 import 'subsidies.dart'; 
-import 'package:Renewify/gen_l10n/app_localizations.dart';
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
 

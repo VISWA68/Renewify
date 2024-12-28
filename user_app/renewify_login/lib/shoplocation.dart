@@ -1,6 +1,6 @@
-import 'package:Renewify/main.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:renewify_login/main.dart';
 import 'map_page.dart';
 import 'solarservices.dart';
 import 'subsidies.dart';
