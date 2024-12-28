@@ -21,6 +21,7 @@ sellers_collection = mongo.db.sellers
 shops_collection = mongo.db.shops
 products_collection = mongo.db.products
 service_providers_collection = mongo.db.service_providers
+requests_collection = mongo.db.requests_collection
 
 # Helper function to serialize ObjectId
 def serialize_object_id(data):
@@ -355,6 +356,92 @@ def get_service_provider_details(service_provider_id):
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@app.route('/request_service', methods=['POST'])
+def request_service():
+    try:
+        data = request.json
+
+        # Check for missing fields
+        required_fields = ['name', 'phone', 'location', 'title', 'issue']
+        for field in required_fields:
+            if field not in data:
+                return jsonify({"error": f"Missing {field}"}), 400
+
+        # Create service request
+        service_request = {
+            "type": "Service",
+            "name": data["name"],
+            "phone": data["phone"],
+            "location": data["location"],
+            "title": data["title"],
+            "issue": data["issue"]
+        }
+
+        # Insert the service request into the requests collection
+        request_id = mongo.db.requests.insert_one(service_request).inserted_id
+
+        return jsonify({"message": "Service request submitted successfully", "request_id": str(request_id)}), 201
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/request_installation', methods=['POST'])
+def request_installation():
+    try:
+        data = request.json
+
+        # Check for missing fields
+        required_fields = ['name', 'phone', 'location']
+        for field in required_fields:
+            if field not in data:
+                return jsonify({"error": f"Missing {field}"}), 400
+
+        # Create installation request
+        installation_request = {
+            "type": "Installation",
+            "name": data["name"],
+            "phone": data["phone"],
+            "location": data["location"]
+        }
+
+        # Insert the installation request into the requests collection
+        request_id = mongo.db.requests.insert_one(installation_request).inserted_id
+
+        return jsonify({"message": "Installation request submitted successfully", "request_id": str(request_id)}), 201
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/get_requests', methods=['GET'])
+def get_requests():
+    try:
+        # Get service provider's user_id (This should come from the logged-in user's session or token)
+        user_id = request.args.get('user_id')
+
+        if not user_id:
+            return jsonify({"error": "User ID is required"}), 400
+
+        # Fetch service provider's profile
+        provider = sellers_collection.find_one({"user_id": user_id})
+
+        if not provider:
+            return jsonify({"error": "Service provider not found"}), 404
+
+        service_type = provider.get("service_type")  # 'installation', 'service', or 'both'
+
+        # Fetch requests based on service provider's type
+        if service_type == 'Both':
+            requests = list(mongo.db.requests.find({}))
+        else:
+            requests = list(mongo.db.requests.find({"type": service_type}))
+
+        # Return the requests
+        return jsonify({"requests": requests}), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 ###################################################################################################################
 
