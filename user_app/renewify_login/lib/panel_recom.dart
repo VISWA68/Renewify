@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:renewify_login/provider/location_provider.dart';
+import 'package:renewify_login/provider/prediction_provider.dart'; // Import the new provider
 import 'package:geolocator/geolocator.dart';
 
 class PanelRecommendation extends StatefulWidget {
@@ -23,13 +23,11 @@ class _PanelRecommendationState extends State<PanelRecommendation> {
     });
   }
 
-  // Fetch location data
   Future<void> _fetchLocation() async {
     final locationProvider =
         Provider.of<LocationProvider>(context, listen: false);
 
     try {
-      // Check if location services are enabled
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -38,7 +36,6 @@ class _PanelRecommendationState extends State<PanelRecommendation> {
         return;
       }
 
-      // Request permission to access location
       LocationPermission permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -55,16 +52,12 @@ class _PanelRecommendationState extends State<PanelRecommendation> {
         return;
       }
 
-      // Get the current position (latitude and longitude)
       Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
 
-      // Update the location provider with the new latitude and longitude
       locationProvider.updateLocation(position.latitude, position.longitude);
-      setState(() {
-        // Optionally trigger a UI update after location is fetched
-      });
+      setState(() {});
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to fetch location: $error')),
@@ -75,8 +68,9 @@ class _PanelRecommendationState extends State<PanelRecommendation> {
   Future<void> _fetchAndSendRecommendation() async {
     final locationProvider =
         Provider.of<LocationProvider>(context, listen: false);
+    final predictionProvider = Provider.of<PredictionProvider>(context,
+        listen: false); // Access the new provider
 
-    // Ensure the provider has valid latitude and longitude
     final latitude = locationProvider.latitude;
     final longitude = locationProvider.longitude;
 
@@ -90,8 +84,15 @@ class _PanelRecommendationState extends State<PanelRecommendation> {
         latitude,
         longitude,
       );
+
+      // After sending the first recommendation request, make the second one
+      await _sendPredictionRequest(
+        _electricityConsumption!,
+        latitude,
+        longitude,
+        predictionProvider,
+      );
     } else {
-      // Show error if data is missing
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please complete all fields.')),
       );
@@ -118,7 +119,6 @@ class _PanelRecommendationState extends State<PanelRecommendation> {
 
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
-        // Display the response in a dialog box
         _showRecommendationDialog(responseData['recommendation']);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -132,7 +132,50 @@ class _PanelRecommendationState extends State<PanelRecommendation> {
     }
   }
 
-  // Show recommendation in a dialog
+  Future<void> _sendPredictionRequest(
+      String electricityConsumption,
+      double latitude,
+      double longitude,
+      PredictionProvider predictionProvider) async {
+    double electricityConsumptionValue = 0;
+    if (electricityConsumption == 'More than 400 units') {
+      electricityConsumptionValue = 500;
+    } else if (electricityConsumption == 'Less than 400 units') {
+      electricityConsumptionValue = 300;
+    }
+    const String url =
+        'https://0650-14-195-39-82.ngrok-free.app/predict_energy';
+
+    final Map<String, dynamic> requestBody = {
+      'electricity_consumption': electricityConsumptionValue,
+      'latitude': latitude,
+      'longitude': longitude,
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(requestBody),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        final predictedEnergyOutput =
+            responseData['predicted_next_month_energy_output_kwh'];
+        predictionProvider.setPredictedEnergyOutput(predictedEnergyOutput);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${response.statusCode}')),
+        );
+      }
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to send prediction request: $error')),
+      );
+    }
+  }
+
   void _showRecommendationDialog(String recommendation) {
     showDialog(
       context: context,
@@ -154,13 +197,13 @@ class _PanelRecommendationState extends State<PanelRecommendation> {
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: Text(
               recommendation,
-              style: TextStyle(fontSize: 16, color: Colors.black),
+              style: const TextStyle(fontSize: 16, color: Colors.black),
             ),
           ),
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).pop();
               },
               child: Text(
                 'OK',
@@ -229,7 +272,6 @@ class _PanelRecommendationState extends State<PanelRecommendation> {
             const SizedBox(height: 20),
             GestureDetector(
               onTap: () {
-                // Trigger the request only after both fields are selected
                 if (_electricityConsumption != null && _roofSpace != null) {
                   _fetchAndSendRecommendation();
                 } else {
