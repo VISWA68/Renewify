@@ -79,7 +79,7 @@ void loop() {
   bool success = true;
 
   success &= Firebase.setFloat(firebaseData, "solar_battery_data/solar_panel_1/voltage", solarPanel1VoltageVal);
-  success &= Firebase.setFloat(firebaseData, "solar_battery_data/solar_panel_1/currentt", solarPanel1CurrentVal);
+  success &= Firebase.setFloat(firebaseData, "solar_battery_data/solar_panel_1/current", solarPanel1CurrentVal);
   success &= Firebase.setFloat(firebaseData, "solar_battery_data/solar_panel_2/voltage", solarPanel2VoltageVal);
   success &= Firebase.setFloat(firebaseData, "solar_battery_data/solar_panel_2/current", solarPanel2CurrentVal);
   success &= Firebase.setFloat(firebaseData, "solar_battery_data/battery/voltage", batteryVoltageVal);
