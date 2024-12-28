@@ -171,9 +171,8 @@
             }
         });
     }
-
     // Load and Render GeoJSON
-    const geojsonUrl = 'buildings_with_centroids_id.geojson'; // Replace with your GeoJSON file path
+    const geojsonUrl =  "{{ geojson_url }}" ; // Replace with your GeoJSON file path
     const heightScale = 1; // No scaling, use actual height values from GeoJSON
 
     async function loadGeoJSON(url) {
