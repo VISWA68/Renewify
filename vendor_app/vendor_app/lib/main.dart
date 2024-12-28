@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:vendor_app/entry.dart';
 import 'package:vendor_app/pages/shop/login.dart';
 
 import 'package:vendor_app/provider/sellerProvider.dart';
@@ -24,7 +25,7 @@ class RenewifyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Renewify Seller',
       theme: ThemeData(primarySwatch: Colors.green),
-      home: LoginPage(),
+      home: EntryPage(),
     );
   }
 }

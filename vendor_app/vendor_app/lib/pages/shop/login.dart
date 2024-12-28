@@ -4,11 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:vendor_app/main.dart';
+import 'package:vendor_app/pages/shop/Register.dart';
 import 'package:vendor_app/pages/shop/home.dart';
 import 'package:vendor_app/provider/sellerProvider.dart';
 import 'package:vendor_app/provider/shopProvider.dart';
-
-
 
 class LoginPage extends StatefulWidget {
   @override
@@ -56,7 +55,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final double height = MediaQuery.of(context).size.height; 
+    final double height = MediaQuery.of(context).size.height;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Renewify Seller - Login')),
@@ -82,7 +81,8 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
               child: Column(
                 children: [
                   TextField(
@@ -99,6 +99,20 @@ class _LoginPageState extends State<LoginPage> {
                   ElevatedButton(
                     onPressed: login,
                     child: const Text('Login'),
+                  ),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  Text("Not registered"),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => RegisterPage(),
+                          ));
+                    },
+                    child: Text('Register here'),
                   ),
                 ],
               ),
