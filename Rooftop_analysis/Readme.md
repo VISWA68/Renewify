@@ -14,7 +14,7 @@ This folder contains the **Rooftop Analysis** and **Building-Integrated Photovol
   - Real-time visualization using **Three.js**.
 - **Power Output Calculation**: Dynamically calculates the estimated power output as the number of panels increases.
 
-### 2. **BIPV Analysis**
+### 2. **BIPV(Building Integrated Photovoltaics) Analysis**
 - **3D Building Visualization**:
   - Users can visualize a detailed 3D model of their building using **Three.js**.
 - **Sun and Shadow Analysis**:
