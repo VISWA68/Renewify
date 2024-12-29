@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify,url_for
 import cv2
 import numpy as np
 from shapely.geometry import Polygon
@@ -53,6 +53,12 @@ def index():
     image_path = "static/satellite_image.png"
     image.save(image_path)
     return render_template('index.html', image_url=image_path)
+
+@app.route('/bipv')
+def bipv():
+    geojson_url = url_for('static', filename='data/buildings_with_centroids_id.geojson')
+    return render_template('bipv.html', geojson_url=geojson_url)
+
 @app.route('/get_lat_long', methods=['POST'])  # Change to POST
 def lat_long():
     global latitude, longitude
