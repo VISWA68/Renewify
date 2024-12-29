@@ -1,4 +1,8 @@
 import 'dart:convert';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:renewify_login/provider/data_provider.dart';
+import 'package:renewify_login/provider/prediction_provider.dart';
+import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
@@ -8,13 +12,24 @@ import 'dashboard1.dart';
 import 'first_page.dart';
 import 'package:http/http.dart' as http; // For encoding the data to JSON
 
-void main() {
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider<LocationProvider>(
           create: (context) => LocationProvider(),
         ),
+        ChangeNotifierProvider<PredictionProvider>(
+          create: (context) => PredictionProvider(),
+        ),
+
+        ChangeNotifierProvider(create: (_) => SolarBatteryProvider()),
       ],
       child: MyApp(),
     ),
@@ -41,6 +56,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    context.read<LocationProvider>().fetchAndUpdateLocation();
     return MaterialApp(
       locale: _locale,
       localizationsDelegates: const [

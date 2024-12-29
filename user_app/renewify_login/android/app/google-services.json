@@ -1,0 +1,87 @@
+{
+  "project_info": {
+    "project_number": "29260081186",
+    "firebase_url": "https://solar-panel-211c6-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "solar-panel-211c6",
+    "storage_bucket": "solar-panel-211c6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:29260081186:android:cdcbf514b412f1ddc7827b",
+        "android_client_info": {
+          "package_name": "com.example.renewify"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA9-ZTPOvbahp3KtrR2hvZwrkH8cDt4yqo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:29260081186:android:199dacf2685107ebc7827b",
+        "android_client_info": {
+          "package_name": "com.example.renewify_login"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA9-ZTPOvbahp3KtrR2hvZwrkH8cDt4yqo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:29260081186:android:4476e8472d1de416c7827b",
+        "android_client_info": {
+          "package_name": "com.example.solar_bio"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA9-ZTPOvbahp3KtrR2hvZwrkH8cDt4yqo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:29260081186:android:9a96483220fb9bb9c7827b",
+        "android_client_info": {
+          "package_name": "com.example.test1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA9-ZTPOvbahp3KtrR2hvZwrkH8cDt4yqo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

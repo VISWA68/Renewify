@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:renewify_login/complaint.dart';
 import 'package:renewify_login/gen_l10n/app_localizations.dart';
+import 'package:renewify_login/solar_centers.dart';
 import 'package:url_launcher/url_launcher.dart';
 // import 'biogas_services.dart';
 import 'dashboard.dart';
@@ -300,7 +301,7 @@ class _SolarServicesState extends State<SolarServices> {
                 () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => MapPage()),
+                    MaterialPageRoute(builder: (context) => SolarCenters()),
                   );
                 },
               ),
