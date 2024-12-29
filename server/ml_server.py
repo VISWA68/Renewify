@@ -25,18 +25,16 @@ print(f"Model Training Completed! Mean Squared Error: {mse:.2f}")
 
 def get_solar_potential(lat, lon):
     current_date = datetime.now()
-    next_month = (current_date.month % 12) + 1  
 
     times = pd.date_range(current_date, periods=1, freq='D', tz='UTC')  
     location = pvlib.location.Location(latitude=lat, longitude=lon)
-    solar_position = location.get_solarposition(times)
-    
-    clearsky = location.get_clearsky(times)
+    clearsky = location.get_clearsky(times)  
     ghi = clearsky['ghi'].mean()
-    dni = clearsky['dni'].mean()
-    dhi = clearsky['dhi'].mean()
 
-    solar_potential = ghi + 0.5 * dni - 0.2 * dhi  
+    panel_area = 1.6  
+    efficiency = 0.18 
+    solar_potential = ghi * panel_area * efficiency  
+
     return solar_potential
 
 def predict_next_month_solar(lat, lon, avg_consumption):
