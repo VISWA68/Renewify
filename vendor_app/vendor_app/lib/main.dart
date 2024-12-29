@@ -30,5 +30,5 @@ class RenewifyApp extends StatelessWidget {
 }
 
 class Url {
-  static const String url = "https://983e-14-195-39-82.ngrok-free.app";
+  static const String url = "https://9b43-14-195-39-82.ngrok-free.app";
 }

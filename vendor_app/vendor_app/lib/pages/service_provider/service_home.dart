@@ -36,14 +36,43 @@ class _ServiceProviderRequestsPageState extends State<ServiceProviderHome> {
     requests = _fetchRequests();
   }
 
-  // Function to launch Google Maps
-  _launchMap(String location) async {
-    final Uri mapUrl = Uri.parse(location);
+  String? encodeQueryParameters(Map<String, String> params) {
+    return params.entries
+        .map((e) =>
+            '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+        .join('&');
+  }
+
+  _makeCall(String phoneNumber) async {
+    final Uri phoneUrl = Uri(
+      scheme: 'tel',
+      path: phoneNumber,
+      query: encodeQueryParameters(<String, String>{}),
+    );
+
+    if (await canLaunchUrl(phoneUrl)) {
+      await launchUrl(phoneUrl);
+    } else {
+      throw 'Could not launch $phoneUrl';
+    }
+  }
+
+  _launchMap(String location, {Map<String, String>? queryParams}) async {
+    String url = location;
+
+    if (queryParams != null && queryParams.isNotEmpty) {
+      final query = encodeQueryParameters(queryParams);
+      url = '$location?$query';
+    }
+
+    final Uri mapUrl = Uri.parse(url);
+
     try {
-      // Check if the URL can be launched
-      if (await canLaunch(mapUrl.toString())) {
-        await launch(mapUrl.toString(),
-            forceSafariVC: false, forceWebView: false);
+      if (await canLaunchUrl(mapUrl)) {
+        await launchUrl(
+          mapUrl,
+          mode: LaunchMode.externalApplication,
+        );
       } else {
         throw 'Could not launch $mapUrl';
       }
@@ -52,17 +81,6 @@ class _ServiceProviderRequestsPageState extends State<ServiceProviderHome> {
     }
   }
 
-  // Function to make a call
-  _makeCall(String phoneNumber) async {
-    final Uri phoneUrl = Uri.parse('tel:$phoneNumber');
-    if (await canLaunch(phoneUrl.toString())) {
-      await launch(phoneUrl.toString());
-    } else {
-      throw 'Could not call $phoneNumber';
-    }
-  }
-
-  // Function to show bottom sheet with options
   _showRequestOptions(BuildContext context, dynamic request) {
     showModalBottomSheet(
       context: context,
@@ -75,7 +93,6 @@ class _ServiceProviderRequestsPageState extends State<ServiceProviderHome> {
               leading: Icon(Icons.check, color: Colors.green),
               title: Text("Accept Request", style: TextStyle(fontSize: 18)),
               onTap: () {
-                // Handle accept request logic here
                 Navigator.pop(ctx);
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content: Text('Request Accepted for ${request['name']}')));
@@ -156,7 +173,8 @@ class _ServiceProviderRequestsPageState extends State<ServiceProviderHome> {
                         Text('Location: ${request['location']}'),
                         Text(
                           '${request['type']} Request',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, color: Colors.red),
                         ),
                       ],
                     ),
