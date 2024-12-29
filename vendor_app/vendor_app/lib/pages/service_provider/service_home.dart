@@ -170,7 +170,9 @@ class _ServiceProviderRequestsPageState extends State<ServiceProviderHome> {
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Location: ${request['location']}'),
+                        request['type'] == 'Service'
+                            ? Text('Issue: ${request['issue']}')
+                            : Text("Need Installation"),
                         Text(
                           '${request['type']} Request',
                           style: TextStyle(
@@ -181,7 +183,6 @@ class _ServiceProviderRequestsPageState extends State<ServiceProviderHome> {
                     trailing: IconButton(
                       icon: Icon(Icons.location_on, color: Colors.blue),
                       onPressed: () {
-                        // Launch the map view for the location
                         _launchMap(request['location']);
                       },
                     ),
