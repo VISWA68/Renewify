@@ -39,7 +39,7 @@ To accelerate the adoption of solar energy in Indian households by offering a co
 
 - **Frontend (User App):** Flutter
 - **Backend APIs:** Flask
-- **Server & Database:** Django and SQLite
+- **Server & Database:** Django and MongoDB
 - **Stakeholder Apps:** Separate apps for installation companies and vendors.
 - **Admin Dashboard:** Developed using HTML, Bootstrap.
 - **Marketing Website:** Built with HTML, Bootstrap, and JavaScript.
