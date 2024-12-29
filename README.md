@@ -95,12 +95,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ---
 
-## 📢 Contact
-
-- **Email:** support@renewify.com
-- **Website:** [www.renewify.com](https://www.renewify.com)
-- **Follow Us:** [LinkedIn](#) | [Twitter](#)
-
----
-
 Join us in revolutionizing renewable energy adoption in India. Together, let's make a greener tomorrow! 🌞
