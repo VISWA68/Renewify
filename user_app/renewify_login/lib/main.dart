@@ -8,9 +8,10 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:renewify_login/gen_l10n/app_localizations.dart';
 import 'package:renewify_login/provider/location_provider.dart';
+import 'package:renewify_login/provider/prediction_provider.dart';
 import 'dashboard1.dart';
 import 'first_page.dart';
-import 'package:http/http.dart' as http; // For encoding the data to JSON
+import 'package:http/http.dart' as http; 
 
 
 void main() async {
@@ -28,8 +29,11 @@ void main() async {
         ChangeNotifierProvider<PredictionProvider>(
           create: (context) => PredictionProvider(),
         ),
+<<<<<<< HEAD
 
         ChangeNotifierProvider(create: (_) => SolarBatteryProvider()),
+=======
+>>>>>>> 2894a4c3b299db4a521ce84532adef8da767119f
       ],
       child: MyApp(),
     ),

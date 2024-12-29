@@ -11,4 +11,8 @@ class PredictionProvider with ChangeNotifier {
     _predictedEnergyOutput = value;
     notifyListeners();
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 2894a4c3b299db4a521ce84532adef8da767119f

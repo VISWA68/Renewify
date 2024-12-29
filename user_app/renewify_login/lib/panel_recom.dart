@@ -143,7 +143,11 @@ class _PanelRecommendationState extends State<PanelRecommendation> {
     } else if (electricityConsumption == 'Less than 400 units') {
       electricityConsumptionValue = 300;
     }
+<<<<<<< HEAD
     const String url = 'https://9b43-14-195-39-82.ngrok-free.app/predict_energy';
+=======
+    const String url = 'http://192.168.23.5:5000/predict_energy';
+>>>>>>> 2894a4c3b299db4a521ce84532adef8da767119f
 
     final Map<String, dynamic> requestBody = {
       'electricity_consumption': electricityConsumptionValue,
@@ -299,7 +303,12 @@ class _PanelRecommendationState extends State<PanelRecommendation> {
               ),
             ),
             const SizedBox(height: 20),
+<<<<<<< HEAD
             if (predictedEnergyOutput != null) ...[
+=======
+            // Displaying predicted energy output
+            if (predictedEnergyOutput != null)
+>>>>>>> 2894a4c3b299db4a521ce84532adef8da767119f
               Text(
                 'Expected Power Output: $predictedEnergyOutput kW',
                 style: TextStyle(
@@ -308,6 +317,7 @@ class _PanelRecommendationState extends State<PanelRecommendation> {
                   color: Colors.black,
                 ),
               ),
+<<<<<<< HEAD
               const SizedBox(height: 20),
               Container(
                 decoration: BoxDecoration(
@@ -371,6 +381,8 @@ class _PanelRecommendationState extends State<PanelRecommendation> {
                 ),
               ),
             ],
+=======
+>>>>>>> 2894a4c3b299db4a521ce84532adef8da767119f
           ],
         ),
       ),

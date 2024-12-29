@@ -6,17 +6,22 @@ import logging
 from dotenv import load_dotenv
 import os
 import uuid
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+from datetime import datetime
+import pvlib
 
 load_dotenv()
 
 app = Flask(__name__)
 
-# MongoDB Configuration
 app.config["MONGO_URI"] = os.getenv('URL')
 mongo = PyMongo(app)
 CORS(app)
 
-# Collections
 users_collection = mongo.db.users
 sellers_collection = mongo.db.sellers
 shops_collection = mongo.db.shops
@@ -76,12 +81,10 @@ def login():
     try:
         data = request.json
 
-        # Validate user
         user = users_collection.find_one({"email": data["email"]})
         if not user or user["password"] != data["password"]:  
             return jsonify({"error": "Invalid credentials"}), 401
 
-        # Fetch seller profile
         seller = sellers_collection.find_one({"email": data["email"]})
         if not seller:
             return jsonify({"error": "Seller profile not found"}), 404
@@ -201,7 +204,6 @@ def get_all_shops():
                 for product in products
             ]
 
-            # Format shop data
             shop_data = {
                 "_id": shop_id,
                 "shop_name": shop.get("shop_name", ""),
@@ -288,7 +290,6 @@ def login_service_provider():
     try:
         data = request.json
 
-        # Validate user
         user = users_collection.find_one({"email": data["email"]})
         if not user or user["password"] != data["password"]: 
             return jsonify({"error": "Invalid credentials"}), 401
@@ -430,14 +431,12 @@ def get_requests():
 @app.route('/get_complaints', methods=['POST'])
 def get_complaints():
     try:
-        # Get request IDs from the request body
         data = request.get_json()
         request_ids = data.get("request_ids", [])
 
         if not request_ids:
             return jsonify({"message": "No request IDs provided"}), 400
 
-        # Fetch complaints from the database using request IDs
         complaints = list(requests_collection.find({"request_id": {"$in": request_ids}}, {"_id": 0}))
         
         return jsonify({"complaints": complaints}), 200
@@ -446,7 +445,6 @@ def get_complaints():
 
 ###################################################################################################################
 def recommend_panel_type(power_input, space_input):
-    # Define logic based on input strings
     if power_input == "Less than 400 units" and space_input == "Less space":
         return "monocrystalline"
     elif power_input == "More than 400 units" and space_input == "Less space":
@@ -458,29 +456,79 @@ def recommend_panel_type(power_input, space_input):
     else:
         return "Invalid input"
 
-# Flask route for recommendation
 @app.route('/recommend', methods=['POST'])
 def recommendation():
     try:
-        # Parse the JSON request body
         data = request.get_json()
         power_input = data.get('electricity_consumption')
         space_input = data.get('roof_space')
 
-        # Validate inputs
         if not power_input or not space_input:
             return jsonify({'error': 'Missing required inputs'}), 400
 
-        # Get the recommendation
         recommendation = recommend_panel_type(power_input, space_input)
 
-        # Return the recommendation
         return jsonify({'recommendation': recommendation}), 200
     except Exception as e:
-        # Handle unexpected errors
         return jsonify({'error': str(e)}), 500
 
 ############################################################################################################
+
+df = pd.read_csv('data.csv')
+
+X = df[["Average_Consumption", "Solar_Potential"]]
+y = df["Next_Month_Solar_Output"]
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+mse = mean_squared_error(y_test, y_pred)
+print(f"Model Training Completed! Mean Squared Error: {mse:.2f}")
+
+def get_solar_potential(lat, lon):
+    current_date = datetime.now()
+
+    times = pd.date_range(current_date, periods=1, freq='D', tz='UTC')  
+    location = pvlib.location.Location(latitude=lat, longitude=lon)
+    clearsky = location.get_clearsky(times)  
+    ghi = clearsky['ghi'].mean()
+
+    panel_area = 1.6  
+    efficiency = 0.18 
+    solar_potential = ghi * panel_area * efficiency  
+
+    return solar_potential
+
+
+def predict_next_month_solar(lat, lon, avg_consumption):
+    solar_potential = get_solar_potential(lat, lon)
+
+    input_data = np.array([[avg_consumption, solar_potential]])
+
+    predicted_output = model.predict(input_data)
+    return predicted_output[0]
+
+@app.route('/predict_energy', methods=['POST'])
+def predict_energy():
+    try:
+        data = request.json
+        latitude = float(data.get('latitude'))
+        longitude = float(data.get('longitude'))
+        avg_consumption = float(data.get('electricity_consumption'))
+        
+        predicted_output = predict_next_month_solar(latitude, longitude, avg_consumption)
+        print(predicted_output)
+        
+        return jsonify({
+            "predicted_next_month_energy_output_kwh": round(predicted_output, 2)
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+#######################################################################################################################################
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=8000, threaded=False)
