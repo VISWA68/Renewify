@@ -50,7 +50,7 @@ To accelerate the adoption of solar energy in Indian households by offering a co
 
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/your-repo/renewify.git
+   git clone https://github.com/renewify/renewify.git
    cd renewify
    ```
 2. **Setup the Backend**
