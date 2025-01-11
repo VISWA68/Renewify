@@ -189,6 +189,7 @@ class _ServiceProviderRequestsPageState extends State<ServiceProviderHome> {
                     onTap: () {
                       // Show options on tap
                       _showRequestOptions(context, request);
+                      
                     },
                   ),
                 );
